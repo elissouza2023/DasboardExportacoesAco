@@ -34,6 +34,9 @@ Os dados originais são disponibilizados em formato de planilha e foram converti
 ---
 
 ## 🧱 Estrutura do Projeto
+
+```
+
 📦 dashboard-exportacoes-aco
 │
 ├── 📁 data
@@ -61,7 +64,7 @@ Os dados originais são disponibilizados em formato de planilha e foram converti
 ├── 📄 README.md
 ├── 📄 .gitignore
 └── 📄 LICENSE
-
+```
 ---
 
 ## 📊 Funcionalidades do Dashboard
@@ -139,3 +142,9 @@ Projeto desenvolvido por Elisângela de Souza, com foco em Análise de Dados apl
 ## 📌 Observação
 
 Este projeto tem caráter educacional e demonstrativo, utilizando dados públicos do site Aço Brasil e sem fins comerciais.
+
+---
+
+## ▶️ Deploy
+
+Em Elaboração
