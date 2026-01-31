@@ -90,3 +90,11 @@ Os dados originais são disponibilizados em formato de planilha e foram converti
 1. Clone o repositório:
    ```bash
    git clone https://github.com/seu-usuario/DasboardExportacoesAco.git
+
+2. Clone o repositório:
+
+pip install -r requirements.txt
+
+3. Execute o dashboard:
+
+streamlit run app.py
