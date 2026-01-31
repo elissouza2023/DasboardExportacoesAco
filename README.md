@@ -91,10 +91,51 @@ Os dados originais são disponibilizados em formato de planilha e foram converti
    ```bash
    git clone https://github.com/seu-usuario/DasboardExportacoesAco.git
 
-2. Clone o repositório:
+2. Instale as dependências:
 
-pip install -r requirements.txt
+  pip install -r requirements.txt
 
 3. Execute o dashboard:
 
-streamlit run app.py
+  streamlit run app.py
+
+
+---
+
+## 🔄 Próximos Passos (Evolução do Projeto)
+
+- Automatizar a atualização dos dados mensais
+
+- Integração com n8n para:
+
+- Coleta automática da planilha no site oficial
+
+- Atualização do dataset no repositório
+
+- Inclusão de novos KPIs do setor siderúrgico
+
+- Publicação do dashboard em ambiente cloud
+
+
+
+---
+
+## 👩‍💻 Sobre a Autora
+
+Projeto desenvolvido por Elisângela de Souza, com foco em Análise de Dados aplicada ao setor industrial, unindo interesses em:
+
+- Setor siderúrgico
+
+- Engenharia e indústria
+
+- Segurança da informação
+
+- Inteligência Artificial
+
+- Visualização e storytelling com dados
+
+---
+
+##📌 Observação
+
+Este projeto tem caráter educacional e demonstrativo, utilizando dados públicos do site Aço Brasil e sem fins comerciais.
