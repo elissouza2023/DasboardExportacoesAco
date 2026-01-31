@@ -1,1 +1,92 @@
+# 📊 Dashboard de Exportações de Aço – Brasil
 
+Este projeto tem como objetivo analisar e visualizar dados de **exportações de aço do Brasil**, utilizando dados oficiais disponibilizados pelo **Instituto Aço Brasil**.
+
+O dashboard foi desenvolvido em **Python**, com foco em **análise de dados aplicada ao setor siderúrgico**, e disponibilizado via **Streamlit**, permitindo uma visualização interativa e acessível das informações.
+
+---
+
+## 🎯 Objetivo do Projeto
+
+Demonstrar habilidades como **Analista de Dados**, aplicadas a um contexto real do **setor siderúrgico**, unindo:
+
+- Dados reais e atualizados
+- Tratamento e organização de dados
+- Análise comparativa ao longo do tempo
+- Visualização clara para apoio à tomada de decisão
+
+O projeto também foi pensado para **evolução futura**, incluindo automação de atualização dos dados.
+
+---
+
+## 🏭 Contexto dos Dados
+
+- **Fonte:** Instituto Aço Brasil  
+- **Período:** 2013 até janeiro de 2025  
+- **Tipo de dados:** Exportações de aço por tipo de produto  
+  - Produtos planos  
+  - Produtos longos  
+  - Semiacabados  
+  - Outros segmentos do setor
+
+Os dados originais são disponibilizados em formato de planilha e foram convertidos para **CSV**, visando melhor desempenho e versionamento.
+
+---
+
+## 🧱 Estrutura do Projeto
+📦 dashboard-exportacoes-aco
+│
+├── 📁 data
+│   ├── 📁 raw
+│   │   └── exportacoes_aco_bruto.csv
+│   │
+│   └── 📁 processed
+│       └── exportacoes_aco_tratado.csv
+│
+├── 📁 src
+│   ├── 📁 utils
+│   │   └── data_processing.py
+│   │
+│   ├── 📁 assets
+│   │   └── logo.png
+│   │
+│   └── 📁 visuals
+│       └── charts.py
+│
+├── 📁 notebooks
+│   └── exploracao_dados.ipynb
+│
+├── 📄 app.py
+├── 📄 requirements.txt
+├── 📄 README.md
+├── 📄 .gitignore
+└── 📄 LICENSE
+
+---
+
+## 📊 Funcionalidades do Dashboard
+
+- Visualização da evolução das exportações ao longo dos anos
+- Comparação entre tipos de produtos siderúrgicos
+- Filtros por período
+- Gráficos interativos para análise exploratória
+- Estrutura preparada para atualizações futuras dos dados
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Python**
+- **Pandas** – tratamento e análise dos dados
+- **NumPy**
+- **Plotly / Matplotlib** – visualização de dados
+- **Streamlit** – construção do dashboard interativo
+- **Git & GitHub** – versionamento
+
+---
+
+## ▶️ Como Executar o Projeto
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/DasboardExportacoesAco.git
