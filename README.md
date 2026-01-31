@@ -136,6 +136,6 @@ Projeto desenvolvido por Elisângela de Souza, com foco em Análise de Dados apl
 
 ---
 
-##📌 Observação
+## 📌 Observação
 
 Este projeto tem caráter educacional e demonstrativo, utilizando dados públicos do site Aço Brasil e sem fins comerciais.
