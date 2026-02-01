@@ -39,12 +39,12 @@ Os dados originais são disponibilizados em formato de planilha e foram converti
 
 📦 dashboard-exportacoes-aco
 │
-📁 data/
-├── 📁 raw/
+📁 data
+├── 📁 raw
 │   └── Performance-Mensal_2025.12.xls
-├── 📁 interim/
+├── 📁 interim
 │   └── exportacoes_aco_tratado_largo.csv
-└── 📁 processed/
+└── 📁 processed
     └── exportacoes_aco_mensal_long.csv
 │
 ├── 📁 src
