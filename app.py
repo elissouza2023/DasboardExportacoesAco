@@ -69,13 +69,35 @@ df = load_data()
 # ======================================================
 # TÍTULO E DESCRIÇÃO
 # ======================================================
-st.title("Dashboard Mercado Siderúrgico Brasileiro")
 st.markdown(
-    """
-    Explore vendas internas, exportações, importações e consumo aparente.  
-    **Fonte:** Instituto Aço Brasil / MDIC.
-    """
+    f"""
+    <style>
+    .stApp {{
+        background-image: url(data:image/jpg;base64,{encoded});
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+
+    /* Sidebar */
+    section[data-testid="stSidebar"] {{
+        background-color: #f0f2f6;
+    }}
+
+    /* Títulos e textos principais */
+    .stTitle, .stSubheader, h1, h2, h3, p {{
+        color: #ffffff !important;
+    }}
+
+    /* Texto padrão */
+    .stMarkdown {{
+        color: #ffffff !important;
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
 )
+
 
 # ======================================================
 # SIDEBAR — FILTROS
