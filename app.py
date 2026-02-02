@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # ======================================================
-# BACKGROUND + CSS (UMA ÚNICA VEZ)
+# BACKGROUND + CSS
 # ======================================================
 def set_background(image_path: Path):
     with open(image_path, "rb") as f:
@@ -23,7 +23,6 @@ def set_background(image_path: Path):
     st.markdown(
         f"""
         <style>
-        /* Fundo principal */
         .stApp {{
             background-image: url(data:image/jpg;base64,{encoded});
             background-size: cover;
@@ -31,18 +30,15 @@ def set_background(image_path: Path):
             background-attachment: fixed;
         }}
 
-        /* Sidebar */
         section[data-testid="stSidebar"] {{
             background-color: #f0f2f6;
         }}
 
-        /* Títulos e textos */
-        h1, h2, h3, p, span {{
+        h1, h2, h3, p {{
             color: #ffffff !important;
         }}
 
-        /* Glassmorphism para gráficos */
-        .glass-card {
+        .glass-card {{
             width: 100%;
             background: rgba(15, 15, 15, 0.60);
             backdrop-filter: blur(10px);
@@ -52,8 +48,7 @@ def set_background(image_path: Path):
             margin: 24px 0;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-
+        }}
         </style>
         """,
         unsafe_allow_html=True
@@ -61,6 +56,25 @@ def set_background(image_path: Path):
 
 BASE_DIR = Path(__file__).resolve().parent
 set_background(BASE_DIR / "assets" / "fundo.jpg")
+
+# ======================================================
+# FUNÇÃO DE ESTILO DOS GRÁFICOS
+# ======================================================
+def apply_plotly_layout(fig):
+    fig.update_layout(
+        autosize=True,
+        margin=dict(l=0, r=0, t=40, b=0),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="white"),
+        legend=dict(
+            bgcolor="rgba(0,0,0,0)",
+            font=dict(color="white")
+        ),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.15)"),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.15)")
+    )
+    return fig
 
 # ======================================================
 # CARREGAMENTO DOS DADOS
@@ -80,24 +94,7 @@ def load_data():
 df = load_data()
 
 # ======================================================
-# VALIDAÇÃO DAS COLUNAS (ANTI-ERRO)
-# ======================================================
-required_cols = [
-    "date",
-    "consumo_aparente",
-    "exportacoes_volume",
-    "vendas_internas",
-    "importacoes_volume",
-    "saldo_comercial_volume"
-]
-
-missing = [c for c in required_cols if c not in df.columns]
-if missing:
-    st.error(f"Colunas ausentes no dataset: {missing}")
-    st.stop()
-
-# ======================================================
-# TÍTULO E DESCRIÇÃO
+# TÍTULO
 # ======================================================
 st.title("Dashboard Mercado Siderúrgico Brasileiro")
 st.markdown(
@@ -131,25 +128,6 @@ tab1, tab2, tab3 = st.tabs([
 ])
 
 # ======================================================
-# FUNÇÃO PADRÃO DE LAYOUT PLOTLY (TRANSPARENTE)
-# ======================================================
-def apply_plotly_layout(fig):
-    fig.update_layout(
-        autosize=True,
-        margin=dict(l=0, r=0, t=40, b=0),
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="white"),
-        legend=dict(
-            bgcolor="rgba(0,0,0,0)",
-            font=dict(color="white")
-        ),
-        xaxis=dict(gridcolor="rgba(255,255,255,0.15)"),
-        yaxis=dict(gridcolor="rgba(255,255,255,0.15)")
-    )
-    return fig
-
-# ======================================================
 # TAB 1 — Vendas Internas vs Exportações
 # ======================================================
 with tab1:
@@ -170,7 +148,7 @@ with tab1:
         barmode="group"
     )
 
-    pct_export = (
+    pct = (
         df_f["exportacoes_volume"]
         / (df_f["exportacoes_volume"] + df_f["vendas_internas"])
     ) * 100
@@ -178,18 +156,19 @@ with tab1:
     fig1.add_trace(
         go.Scatter(
             x=df_f["date"],
-            y=pct_export,
+            y=pct,
             name="% Exportações",
             yaxis="y2",
-            line=dict(dash="dash")
+            line=dict(dash="dash", color="red")
         )
     )
 
     fig1.update_layout(
         yaxis2=dict(
-            title="% Exportações",
             overlaying="y",
-            side="right"
+            side="right",
+            title="% Exportações",
+            showgrid=False
         )
     )
 
@@ -220,21 +199,24 @@ with tab2:
         barmode="group"
     )
 
+    saldo = df_f["exportacoes_volume"] - df_f["importacoes_volume"]
+
     fig2.add_trace(
         go.Scatter(
             x=df_f["date"],
-            y=df_f["saldo_comercial_volume"],
+            y=saldo,
             name="Saldo Comercial",
             yaxis="y2",
-            line=dict(dash="dot")
+            line=dict(color="cyan")
         )
     )
 
     fig2.update_layout(
         yaxis2=dict(
-            title="Saldo (mil t)",
             overlaying="y",
-            side="right"
+            side="right",
+            title="Saldo (mil t)",
+            showgrid=False
         )
     )
 
