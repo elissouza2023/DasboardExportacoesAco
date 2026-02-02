@@ -19,7 +19,7 @@ st.set_page_config(
 def load_data():
     # Caminho absoluto baseado na localização do app.py
     BASE_DIR = Path(__file__).resolve().parent
-   DATA_PATH = BASE_DIR / "data" / "processed" / "dados_siderurgia_limpos_2013_2025.csv"
+    DATA_PATH = BASE_DIR / "data" / "processed" / "dados_siderurgia_limpos_2013_2025.csv"
 
     df = pd.read_csv(DATA_PATH)
     df["date"] = pd.to_datetime(df["date"])
