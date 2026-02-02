@@ -146,4 +146,4 @@ Este projeto tem caráter educacional e demonstrativo, utilizando dados público
 
 ## ▶️ Deploy
 
-Em Elaboração
+https://mercadosiderurgicobr.streamlit.app
