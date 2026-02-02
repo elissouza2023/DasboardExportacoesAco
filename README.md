@@ -1,51 +1,44 @@
-# 📊 Dashboard de Exportações de Aço – Brasil
+## 📊 Dashboard Mercado Siderurgico Brasileiro
 
-Este projeto tem como objetivo analisar e visualizar dados de **exportações de aço do Brasil**, utilizando dados oficiais disponibilizados pelo **Instituto Aço Brasil**.
-
-O dashboard foi desenvolvido em **Python**, com foco em **análise de dados aplicada ao setor siderúrgico**, e disponibilizado via **Streamlit**, permitindo uma visualização interativa e acessível das informações.
-
----
-
-## 🎯 Objetivo do Projeto
-
-Demonstrar habilidades como **Analista de Dados**, aplicadas a um contexto real do **setor siderúrgico**, unindo:
-
-- Dados reais e atualizados
-- Tratamento e organização de dados
-- Análise comparativa ao longo do tempo
-- Visualização clara para apoio à tomada de decisão
-
-O projeto também foi pensado para **evolução futura**, incluindo automação de atualização dos dados.
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.30%2B-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Status](https://img.shields.io/badge/Status-Em%20desenvolvimento-orange)](https://github.com/elissouza2023/DasboardExportacoesAco)
 
 ---
 
-## 🏭 Contexto dos Dados
 
-- **Fonte:** Instituto Aço Brasil  
-- **Período:** 2013 até janeiro de 2025  
-- **Tipo de dados:** Exportações de aço por tipo de produto  
-  - Produtos planos  
-  - Produtos longos  
-  - Semiacabados  
-  - Outros segmentos do setor
+### 🎯 Objetivo
+Demonstrar competências em **Análise de Dados** e **Visualização** aplicadas a um setor industrial estratégico, utilizando dados reais, tratamento robusto e interface amigável para suporte à tomada de decisão.
 
-Os dados originais são disponibilizados em formato de planilha e foram convertidos para **CSV**, visando melhor desempenho e versionamento.
+### 🏭 Contexto dos Dados
+- **Fonte oficial**: [Instituto Aço Brasil](https://www.acobrasil.org.br/site/estatistica-mensal)  
+- **Período coberto**: Janeiro/2013 a Dezembro/2025 (atualizado mensalmente)  
+- **Granularidade**: Mensal (mil toneladas)  
+- **Principais indicadores**:
+  - Produção de aço bruto
+  - Vendas internas (domestic sales)
+  - Exportações (volume)
+  - Consumo aparente
+  - Importações (calculadas: consumo aparente - vendas internas)
+  - Saldo comercial (exportações - importações)
 
+Os dados são originalmente em formato XLS e processados para CSV limpo e otimizado.
 ---
 
-## 🧱 Estrutura do Projeto
+### 🧱 Estrutura do Projeto
 
 ```
 
 📦 dashboard-exportacoes-aco
 │
 📁 data
-├── 📁 raw
-│   └── Performance-Mensal_2025.12.xls
-├── 📁 interim
-│   └── exportacoes_aco_tratado_largo.csv
-└── 📁 processed
-    └── exportacoes_aco_mensal_long.csv
+├── 📁 raw # Planilhas originais baixadas
+│   └── Performance-Mensal_2025*.*.xls
+├── 📁 interim   
+│   
+└── 📁 processed  
+│    └── exportacoes_aco_mensal_long.csv
 │
 ├── 📁 src
 │   ├── 📁 utils
@@ -57,10 +50,10 @@ Os dados originais são disponibilizados em formato de planilha e foram converti
 │   └── 📁 visuals
 │       └── charts.py
 │
-├── 📁 notebooks
+├── 📁 notebooks  
 │   └── exploracao_dados.ipynb
 │
-├── 📄 app.py
+├── 📄 app.py   
 ├── 📄 requirements.txt
 ├── 📄 README.md
 ├── 📄 .gitignore
@@ -68,41 +61,50 @@ Os dados originais são disponibilizados em formato de planilha e foram converti
 ```
 ---
 
-## 📊 Funcionalidades do Dashboard
-
-- Visualização da evolução das exportações ao longo dos anos
-- Comparação entre tipos de produtos siderúrgicos
-- Filtros por período
-- Gráficos interativos para análise exploratória
-- Estrutura preparada para atualizações futuras dos dados
-
----
-
-## 🛠️ Tecnologias Utilizadas
-
-- **Python**
-- **Pandas** – tratamento e análise dos dados
-- **NumPy**
-- **Plotly / Matplotlib** – visualização de dados
-- **Streamlit** – construção do dashboard interativo
-- **Git & GitHub** – versionamento
+### 📊 Funcionalidades Principais
+- Gráficos interativos com Plotly (barras agrupadas + linhas secundárias)
+- Filtros na lateral:
+  - Seleção de múltiplos anos
+  - Intervalo de datas
+- Comparações chave:
+  - Vendas internas vs Exportações (% de exportação)
+  - Exportações vs Importações (saldo comercial)
+  - Consumo aparente vs Vendas internas (pressão de importados)
+- Preparado para evolução: automação mensal via n8n + GitHub Actions - Em elaboração
 
 ---
 
-## ▶️ Como Executar o Projeto
+### 🛠️ Tecnologias Utilizadas
+- **Linguagem**: Python 3.10+
+- **Manipulação de dados**: Pandas, NumPy
+- **Visualização**: Plotly (interativo)
+- **Dashboard**: Streamlit
+- **Versionamento**: Git + GitHub
+- **Hospedagem futura**: Streamlit Cloud
+
+---
+
+### ▶️ Como Executar Localmente
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/DasboardExportacoesAco.git
+    git clone https://github.com/seu-usuario/DasboardExportacoesAco.git
 
-2. Instale as dependências:
+2.  Crie e ative um ambiente virtual
+ ```bash
+    python -m venv venv
+    source venv/bin/activate      # Linux / macOS
+    venv\Scripts\activate         # Windows
+ ```
 
-  pip install -r requirements.txt
-
+3.  Instale as dependências
+ ```bash
+    pip install -r requirements.txt
+ ```
 3. Execute o dashboard:
-
-  streamlit run app.py
-
+ ```bash
+    streamlit run app.py
+ ```
 
 ---
 
@@ -118,26 +120,22 @@ Os dados originais são disponibilizados em formato de planilha e foram converti
 
 - Inclusão de novos KPIs do setor siderúrgico
 
-- Publicação do dashboard em ambiente cloud
-
-
-
 ---
 
 ## 👩‍💻 Sobre a Autora
 
 Projeto desenvolvido por Elisângela de Souza, com foco em Análise de Dados aplicada ao setor industrial, unindo interesses em:
 
-- Setor siderúrgico
 
+- Análise de dados industriais
+- Setor siderúrgico e commodities
+- Visualização e storytelling com dados
+- Automação de processos (n8n, GitHub Actions)
+- Inteligência Artificial aplicada
 - Engenharia e indústria
-
 - Segurança da informação
 
-- Inteligência Artificial
-
-- Visualização e storytelling com dados
-
+  
 ---
 
 ## 📌 Observação
