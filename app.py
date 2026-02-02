@@ -15,7 +15,7 @@ def load_data():
 df = load_data()
 
 # Título e introdução
-st.title("Dashboard Siderurgia Brasileira – Aço Brasil (2013–2025)")
+st.title("Dashboard Mercado Siderurgico Brasileiro")
 st.markdown("Explore vendas internas, exportações, importações e consumo aparente. Fonte: Aço Brasil / MDIC.")
 
 # Sidebar: Filtros
