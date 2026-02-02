@@ -42,16 +42,18 @@ def set_background(image_path: Path):
         }}
 
         /* Glassmorphism para gráficos */
-        .glass-card {{
-            background: rgba(15, 15, 15, 0.55);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 16px;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }}
+        .glass-card {
+            width: 100%;
+            background: rgba(15, 15, 15, 0.60);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
         </style>
         """,
         unsafe_allow_html=True
@@ -133,6 +135,8 @@ tab1, tab2, tab3 = st.tabs([
 # ======================================================
 def apply_plotly_layout(fig):
     fig.update_layout(
+        autosize=True,
+        margin=dict(l=0, r=0, t=40, b=0),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="white"),
