@@ -14,24 +14,16 @@ st.set_page_config(
 )
 
 # ======================================================
-# PATH BASE
-# ======================================================
-BASE_DIR = Path(__file__).resolve().parent
-
-# ======================================================
-# BACKGROUND + CSS (APLICADO UMA ÚNICA VEZ)
+# BACKGROUND + CSS (UMA ÚNICA VEZ)
 # ======================================================
 def set_background(image_path: Path):
-    if not image_path.exists():
-        st.error(f"Imagem de fundo não encontrada: {image_path}")
-        st.stop()
-
     with open(image_path, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()
 
     st.markdown(
         f"""
         <style>
+        /* Fundo principal */
         .stApp {{
             background-image: url(data:image/jpg;base64,{encoded});
             background-size: cover;
@@ -39,18 +31,33 @@ def set_background(image_path: Path):
             background-attachment: fixed;
         }}
 
+        /* Sidebar */
         section[data-testid="stSidebar"] {{
             background-color: #f0f2f6;
         }}
 
-        h1, h2, h3, p, .stMarkdown {{
+        /* Títulos e textos */
+        h1, h2, h3, p, span {{
             color: #ffffff !important;
+        }}
+
+        /* Glassmorphism para gráficos */
+        .glass-card {{
+            background: rgba(15, 15, 15, 0.55);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }}
         </style>
         """,
         unsafe_allow_html=True
     )
 
+BASE_DIR = Path(__file__).resolve().parent
 set_background(BASE_DIR / "assets" / "fundo.jpg")
 
 # ======================================================
@@ -66,14 +73,6 @@ def load_data():
 
     df = pd.read_csv(data_path)
     df["date"] = pd.to_datetime(df["date"])
-
-    # Padroniza nomes para uso no app
-    df = df.rename(columns={
-        "exportacoes_volume": "exportacoes",
-        "importacoes_volume": "importacoes",
-        "saldo_comercial_volume": "saldo_comercial"
-    })
-
     return df
 
 df = load_data()
@@ -83,11 +82,11 @@ df = load_data()
 # ======================================================
 required_cols = [
     "date",
-    "vendas_internas",
-    "exportacoes",
-    "importacoes",
     "consumo_aparente",
-    "saldo_comercial"
+    "exportacoes_volume",
+    "vendas_internas",
+    "importacoes_volume",
+    "saldo_comercial_volume"
 ]
 
 missing = [c for c in required_cols if c not in df.columns]
@@ -111,26 +110,14 @@ st.markdown(
 # ======================================================
 st.sidebar.header("Filtros")
 
-anos_disponiveis = sorted(df["date"].dt.year.unique())
-anos_selecionados = st.sidebar.multiselect(
+anos = sorted(df["date"].dt.year.unique())
+anos_sel = st.sidebar.multiselect(
     "Selecione os anos",
-    options=anos_disponiveis,
-    default=anos_disponiveis[-3:]
+    options=anos,
+    default=anos[-3:]
 )
 
-df_f = df[df["date"].dt.year.isin(anos_selecionados)] if anos_selecionados else df.copy()
-
-# ======================================================
-# FUNÇÃO PADRÃO DE ESTILO PARA GRÁFICOS
-# ======================================================
-def apply_dark_style(fig):
-    fig.update_layout(
-        plot_bgcolor="rgba(0,0,0,0)",
-        paper_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="white"),
-        legend=dict(font=dict(color="white"))
-    )
-    return fig
+df_f = df[df["date"].dt.year.isin(anos_sel)] if anos_sel else df.copy()
 
 # ======================================================
 # TABS
@@ -141,15 +128,32 @@ tab1, tab2, tab3 = st.tabs([
     "Consumo Aparente vs Vendas Internas"
 ])
 
-# ------------------------------------------------------
+# ======================================================
+# FUNÇÃO PADRÃO DE LAYOUT PLOTLY (TRANSPARENTE)
+# ======================================================
+def apply_plotly_layout(fig):
+    fig.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="white"),
+        legend=dict(
+            bgcolor="rgba(0,0,0,0)",
+            font=dict(color="white")
+        ),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.15)"),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.15)")
+    )
+    return fig
+
+# ======================================================
 # TAB 1 — Vendas Internas vs Exportações
-# ------------------------------------------------------
+# ======================================================
 with tab1:
     st.subheader("Vendas Internas vs Exportações")
 
     melt1 = df_f.melt(
         id_vars="date",
-        value_vars=["vendas_internas", "exportacoes"],
+        value_vars=["vendas_internas", "exportacoes_volume"],
         var_name="Indicador",
         value_name="Volume (mil t)"
     )
@@ -163,8 +167,8 @@ with tab1:
     )
 
     pct_export = (
-        df_f["exportacoes"]
-        / (df_f["exportacoes"] + df_f["vendas_internas"])
+        df_f["exportacoes_volume"]
+        / (df_f["exportacoes_volume"] + df_f["vendas_internas"])
     ) * 100
 
     fig1.add_trace(
@@ -185,18 +189,21 @@ with tab1:
         )
     )
 
-    apply_dark_style(fig1)
-    st.plotly_chart(fig1, use_container_width=True)
+    fig1 = apply_plotly_layout(fig1)
 
-# ------------------------------------------------------
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.plotly_chart(fig1, use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ======================================================
 # TAB 2 — Exportações vs Importações
-# ------------------------------------------------------
+# ======================================================
 with tab2:
     st.subheader("Exportações vs Importações")
 
     melt2 = df_f.melt(
         id_vars="date",
-        value_vars=["exportacoes", "importacoes"],
+        value_vars=["exportacoes_volume", "importacoes_volume"],
         var_name="Indicador",
         value_name="Volume (mil t)"
     )
@@ -212,7 +219,7 @@ with tab2:
     fig2.add_trace(
         go.Scatter(
             x=df_f["date"],
-            y=df_f["saldo_comercial"],
+            y=df_f["saldo_comercial_volume"],
             name="Saldo Comercial",
             yaxis="y2",
             line=dict(dash="dot")
@@ -227,12 +234,15 @@ with tab2:
         )
     )
 
-    apply_dark_style(fig2)
-    st.plotly_chart(fig2, use_container_width=True)
+    fig2 = apply_plotly_layout(fig2)
 
-# ------------------------------------------------------
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+    st.plotly_chart(fig2, use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ======================================================
 # TAB 3 — Consumo Aparente vs Vendas Internas
-# ------------------------------------------------------
+# ======================================================
 with tab3:
     st.subheader("Consumo Aparente vs Vendas Internas")
 
@@ -250,8 +260,11 @@ with tab3:
         color="Indicador"
     )
 
-    apply_dark_style(fig3)
+    fig3 = apply_plotly_layout(fig3)
+
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.plotly_chart(fig3, use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ======================================================
 # RODAPÉ
