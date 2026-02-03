@@ -60,6 +60,26 @@ def set_background(image_path: Path):
                 color: white !important;
             }}
 
+            /* Estilização dos KPIs */
+            [data-testid="stMetricValue"] {{
+                font-size: 1.8rem !important;
+                color: white !important;
+                text-shadow: 1px 1px 2px black;
+            }}
+            [data-testid="stMetricLabel"] {{
+                color: #e09e50 !important;
+                font-weight: bold !important;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }}
+            div[data-testid="stMetric"] {{
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(10px);
+                border-left: 5px solid #b74803;
+                padding: 15px;
+                border-radius: 10px;
+            }}
+
             /* Ajuste das Abas */
             .stTabs [data-baseweb="tab"] p {{
                 color: white !important;
@@ -67,7 +87,7 @@ def set_background(image_path: Path):
                 font-size: 16px;
             }}
             
-            /* Rodapé fixo */
+            /* Rodapé customizado */
             .custom-footer {{
                 background-color: rgba(0, 0, 0, 0.75);
                 padding: 15px;
@@ -91,7 +111,6 @@ def apply_plotly_layout(fig):
     fig.update_layout(
         autosize=True,
         margin=dict(l=60, r=60, t=50, b=60),
-        # Efeito vidro simulado via Plotly
         paper_bgcolor="rgba(30, 30, 30, 0.7)", 
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="white", size=13),
@@ -103,13 +122,11 @@ def apply_plotly_layout(fig):
         ),
         xaxis=dict(
             gridcolor="rgba(255,255,255,0.1)",
-            tickfont=dict(color="white", size=12),
-            title_font=dict(size=14)
+            tickfont=dict(color="white", size=12)
         ),
         yaxis=dict(
             gridcolor="rgba(255,255,255,0.1)",
-            tickfont=dict(color="white", size=12),
-            title_font=dict(size=14)
+            tickfont=dict(color="white", size=12)
         )
     )
     return fig
@@ -130,12 +147,12 @@ def load_data():
 df = load_data()
 
 # ======================================================
-# INTERFACE PRINCIPAL
+# TÍTULO E FILTROS
 # ======================================================
 st.title("📊 Dashboard Mercado Siderúrgico Brasileiro")
-st.markdown("Explore vendas internas, exportações, importações e consumo aparente. **Fonte:** Instituto Aço Brasil / MDIC.")
+st.markdown("Explore vendas internas, exportações, importações e consumo aparente.")
 
-# SIDEBAR – FILTROS
+# SIDEBAR
 st.sidebar.header("Filtros de Análise")
 anos = sorted(df["date"].dt.year.unique())
 anos_sel = st.sidebar.multiselect(
@@ -146,81 +163,74 @@ anos_sel = st.sidebar.multiselect(
 
 df_f = df[df["date"].dt.year.isin(anos_sel)] if anos_sel else df.copy()
 
-# ESTRUTURA DE ABAS
+# ======================================================
+# SEÇÃO DE KPIs
+# ======================================================
+if not df_f.empty:
+    total_vendas = df_f["vendas_internas"].sum()
+    total_export = df_f["exportacoes_volume"].sum()
+    consumo_medio = df_f["consumo_aparente"].mean()
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("Total Vendas Internas", f"{total_vendas:,.0f} mil t".replace(",", "."))
+    with col2:
+        st.metric("Total Exportações", f"{total_export:,.0f} mil t".replace(",", "."))
+    with col3:
+        st.metric("Média Consumo Aparente", f"{consumo_medio:,.0f} mil t".replace(",", "."))
+
+st.markdown("---")
+
+# ======================================================
+# ESTRUTURA DE ABAS E GRÁFICOS
+# ======================================================
 tab1, tab2, tab3 = st.tabs([
     "📦 Vendas vs Exportações",
     "🚢 Fluxo Import/Export",
     "📈 Consumo Aparente"
 ])
 
-# TAB 1 - Vendas Internas vs Exportações
 with tab1:
     st.subheader("Volume de Vendas Internas e Exportações")
     melt1 = df_f.melt(
         id_vars="date",
         value_vars=["vendas_internas", "exportacoes_volume"],
-        var_name="Indicador",
-        value_name="Volume (mil t)"
+        var_name="Indicador", value_name="Volume (mil t)"
     )
-
     fig1 = px.bar(
         melt1, x="date", y="Volume (mil t)",
         color="Indicador", barmode="group",
-        color_discrete_map={
-            "vendas_internas": "#e09e50", # Ouro Queimado
-            "exportacoes_volume": "#b74803" # Ferrugem
-        }
+        color_discrete_map={"vendas_internas": "#e09e50", "exportacoes_volume": "#b74803"}
     )
+    st.plotly_chart(apply_plotly_layout(fig1), use_container_width=True)
 
-    # Linha de porcentagem (Eixo secundário)
-    total = df_f["exportacoes_volume"] + df_f["vendas_internas"]
-    pct = (df_f["exportacoes_volume"] / total * 100).where(total != 0, 0)
-
-    fig1.add_trace(go.Scatter(
-        x=df_f["date"], y=pct, name="% Exportações",
-        yaxis="y2", line=dict(dash="dash", color="#ffffff", width=2)
-    ))
-
-    fig1.update_layout(
-        yaxis2=dict(overlaying="y", side="right", title="% Exportações", range=[0, 100], showgrid=False)
-    )
-
-    st.plotly_chart(apply_plotly_layout(fig1), use_container_width=True, config={'displayModeBar': False})
-
-# TAB 2 - Exportações vs Importações
 with tab2:
     st.subheader("Comparativo de Comércio Exterior")
     melt2 = df_f.melt(
         id_vars="date",
         value_vars=["exportacoes_volume", "importacoes_volume"],
-        var_name="Indicador",
-        value_name="Volume (mil t)"
+        var_name="Indicador", value_name="Volume (mil t)"
     )
-
     fig2 = px.bar(
         melt2, x="date", y="Volume (mil t)",
         color="Indicador", barmode="group",
-        color_discrete_sequence=["#b74803", "#7ca8cc"] # Ferrugem e Azul frio para contraste
+        color_discrete_sequence=["#b74803", "#7ca8cc"]
     )
+    st.plotly_chart(apply_plotly_layout(fig2), use_container_width=True)
 
-    st.plotly_chart(apply_plotly_layout(fig2), use_container_width=True, config={'displayModeBar': False})
-
-# TAB 3 - Consumo Aparente
 with tab3:
     st.subheader("Evolução do Consumo Aparente")
     melt3 = df_f.melt(
         id_vars="date",
         value_vars=["consumo_aparente", "vendas_internas"],
-        var_name="Indicador",
-        value_name="Volume (mil t)"
+        var_name="Indicador", value_name="Volume (mil t)"
     )
-
     fig3 = px.line(
         melt3, x="date", y="Volume (mil t)", color="Indicador",
         color_discrete_map={"consumo_aparente": "#ffffff", "vendas_internas": "#e09e50"}
     )
-    
-    st.plotly_chart(apply_plotly_layout(fig3), use_container_width=True, config={'displayModeBar': False})
+    st.plotly_chart(apply_plotly_layout(fig3), use_container_width=True)
 
 # ======================================================
 # RODAPÉ
@@ -228,7 +238,7 @@ with tab3:
 st.markdown(
     """
     <div class="custom-footer">
-        <p style="margin:0; font-size: 1rem; letter-spacing: 0.5px;">
+        <p style="margin:0; font-size: 1rem;">
             <strong>Elisângela de Souza</strong> | Dados atualizados até dez/2025
         </p>
     </div>
