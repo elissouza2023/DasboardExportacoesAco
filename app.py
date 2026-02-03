@@ -29,7 +29,7 @@ def set_background(image_path: Path):
                 z-index: -1;
             }}
             .glass-section {{
-                background: rgba(30, 30, 50, 0.60) !important;   /* um pouco mais opaco */
+                background: rgba(30, 30, 50, 0.45) !important;   /* um pouco mais opaco */
                 backdrop-filter: blur(14px) !important;
                 -webkit-backdrop-filter: blur(14px) !important;
                 border-radius: 18px !important;
