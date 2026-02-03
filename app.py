@@ -38,7 +38,8 @@ def set_background(image_path: Path):
                 z-index: -1;
             }}
 
-            .glass-section {{
+            /* Container com efeito vidro */
+            div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlock"] {{
                 background: rgba(30, 30, 50, 0.45);
                 backdrop-filter: blur(14px);
                 -webkit-backdrop-filter: blur(14px);
@@ -49,7 +50,8 @@ def set_background(image_path: Path):
                 margin: 1.5rem 0 2.5rem 0;
             }}
 
-            .glass-section [data-testid="stPlotlyChart"] {{
+            /* Ajuste para os gráficos ficarem com largura total */
+            [data-testid="stPlotlyChart"] {{
                 width: 100% !important;
             }}
 
@@ -144,127 +146,121 @@ tab1, tab2, tab3 = st.tabs([
 # ======================================================
 with tab1:
     st.subheader("Vendas Internas vs Exportações")
-
-    st.markdown('<div class="glass-section">', unsafe_allow_html=True)
-
-    melt1 = df_f.melt(
-        id_vars="date",
-        value_vars=["vendas_internas", "exportacoes_volume"],
-        var_name="Indicador",
-        value_name="Volume (mil t)"
-    )
-
-    fig1 = px.bar(
-        melt1,
-        x="date",
-        y="Volume (mil t)",
-        color="Indicador",
-        barmode="group"
-    )
-
-    total = df_f["exportacoes_volume"] + df_f["vendas_internas"]
-    pct = (df_f["exportacoes_volume"] / total * 100).where(total != 0, 0)
-
-    fig1.add_trace(
-        go.Scatter(
-            x=df_f["date"],
-            y=pct,
-            name="% Exportações",
-            yaxis="y2",
-            line=dict(dash="dash", color="red")
+    
+    # Usar container para aplicar o efeito vidro
+    with st.container():
+        melt1 = df_f.melt(
+            id_vars="date",
+            value_vars=["vendas_internas", "exportacoes_volume"],
+            var_name="Indicador",
+            value_name="Volume (mil t)"
         )
-    )
 
-    fig1.update_layout(
-        yaxis2=dict(
-            overlaying="y",
-            side="right",
-            title="% Exportações",
-            showgrid=False,
-            range=[0, 100]
+        fig1 = px.bar(
+            melt1,
+            x="date",
+            y="Volume (mil t)",
+            color="Indicador",
+            barmode="group"
         )
-    )
 
-    fig1 = apply_plotly_layout(fig1)
-    st.plotly_chart(fig1, use_container_width=True, config={'displayModeBar': False})
+        total = df_f["exportacoes_volume"] + df_f["vendas_internas"]
+        pct = (df_f["exportacoes_volume"] / total * 100).where(total != 0, 0)
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        fig1.add_trace(
+            go.Scatter(
+                x=df_f["date"],
+                y=pct,
+                name="% Exportações",
+                yaxis="y2",
+                line=dict(dash="dash", color="red")
+            )
+        )
+
+        fig1.update_layout(
+            yaxis2=dict(
+                overlaying="y",
+                side="right",
+                title="% Exportações",
+                showgrid=False,
+                range=[0, 100]
+            )
+        )
+
+        fig1 = apply_plotly_layout(fig1)
+        st.plotly_chart(fig1, use_container_width=True, config={'displayModeBar': False})
 
 # ======================================================
 # TAB 2
 # ======================================================
 with tab2:
     st.subheader("Exportações vs Importações")
-
-    st.markdown('<div class="glass-section">', unsafe_allow_html=True)
-
-    melt2 = df_f.melt(
-        id_vars="date",
-        value_vars=["exportacoes_volume", "importacoes_volume"],
-        var_name="Indicador",
-        value_name="Volume (mil t)"
-    )
-
-    fig2 = px.bar(
-        melt2,
-        x="date",
-        y="Volume (mil t)",
-        color="Indicador",
-        barmode="group"
-    )
-
-    saldo = df_f["exportacoes_volume"] - df_f["importacoes_volume"]
-
-    fig2.add_trace(
-        go.Scatter(
-            x=df_f["date"],
-            y=saldo,
-            name="Saldo Comercial",
-            yaxis="y2",
-            line=dict(color="cyan")
+    
+    # Usar container para aplicar o efeito vidro
+    with st.container():
+        melt2 = df_f.melt(
+            id_vars="date",
+            value_vars=["exportacoes_volume", "importacoes_volume"],
+            var_name="Indicador",
+            value_name="Volume (mil t)"
         )
-    )
 
-    fig2.update_layout(
-        yaxis2=dict(
-            overlaying="y",
-            side="right",
-            title="Saldo (mil t)",
-            showgrid=False
+        fig2 = px.bar(
+            melt2,
+            x="date",
+            y="Volume (mil t)",
+            color="Indicador",
+            barmode="group"
         )
-    )
 
-    fig2 = apply_plotly_layout(fig2)
-    st.plotly_chart(fig2, use_container_width=True, config={'displayModeBar': False})
+        saldo = df_f["exportacoes_volume"] - df_f["importacoes_volume"]
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        fig2.add_trace(
+            go.Scatter(
+                x=df_f["date"],
+                y=saldo,
+                name="Saldo Comercial",
+                yaxis="y2",
+                line=dict(color="cyan")
+            )
+        )
+
+        fig2.update_layout(
+            yaxis2=dict(
+                overlaying="y",
+                side="right",
+                title="Saldo (mil t)",
+                showgrid=False
+            )
+        )
+
+        fig2 = apply_plotly_layout(fig2)
+        st.plotly_chart(fig2, use_container_width=True, config={'displayModeBar': False})
 
 # ======================================================
 # TAB 3
 # ======================================================
 with tab3:
     st.subheader("Consumo Aparente vs Vendas Internas")
+    
+    # Usar container para aplicar o efeito vidro
+    with st.container():
+        melt3 = df_f.melt(
+            id_vars="date",
+            value_vars=["consumo_aparente", "vendas_internas"],
+            var_name="Indicador",
+            value_name="Volume (mil t)"
+        )
 
-    st.markdown('<div class="glass-section">', unsafe_allow_html=True)
+        fig3 = px.line(
+            melt3,
+            x="date",
+            y="Volume (mil t)",
+            color="Indicador"
+        )
 
-    melt3 = df_f.melt(
-        id_vars="date",
-        value_vars=["consumo_aparente", "vendas_internas"],
-        var_name="Indicador",
-        value_name="Volume (mil t)"
-    )
-
-    fig3 = px.line(
-        melt3,
-        x="date",
-        y="Volume (mil t)",
-        color="Indicador"
-    )
-
-    fig3 = apply_plotly_layout(fig3)
-    st.plotly_chart(fig3, use_container_width=True, config={'displayModeBar': False})
-
-    st.markdown('</div>', unsafe_allow_html=True)
+        fig3 = apply_plotly_layout(fig3)
+        st.plotly_chart(fig3, use_container_width=True, config={'displayModeBar': False})
 
 # ======================================================
 # RODAPÉ
