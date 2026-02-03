@@ -37,7 +37,7 @@ def set_background(image_path: Path):
                 box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55) !important;
                 padding: 2rem !important;                        /* mais espaço interno */
                 margin: 1.5rem 0 3rem 0 !important;
-                min-height: 620px !important;                    /* força altura mínima */
+                height: auto !important;                   /* força altura mínima */
                 overflow: visible !important;
                 display: block !important;
             }}
