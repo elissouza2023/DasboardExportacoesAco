@@ -14,16 +14,18 @@ st.set_page_config(
 )
 
 # ======================================================
-# BACKGROUND + CSS CUSTOMIZADO
+# BACKGROUND + CSS (ESTÁVEL E SEGURO)
 # ======================================================
 def set_background(image_path: Path):
+    if not image_path.exists():
+        return
     with open(image_path, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()
 
     st.markdown(
         f"""
         <style>
-            /* Plano de fundo geral */
+            /* Fundo da Aplicação */
             .stApp {{
                 background-image: url(data:image/jpg;base64,{encoded});
                 background-size: cover;
@@ -31,47 +33,48 @@ def set_background(image_path: Path):
                 background-attachment: fixed;
             }}
 
+            /* Camada de escurecimento para contraste */
             .stApp::before {{
                 content: "";
                 position: fixed;
                 inset: 0;
-                background: rgba(0, 0, 0, 0.5); /* Escurece um pouco mais para contraste */
+                background: rgba(0, 0, 0, 0.6);
                 z-index: -1;
             }}
 
-            /* CORREÇÃO DO EFEITO VIDRO: Aplicando diretamente nos cards dos gráficos */
-            div[data-testid="stVerticalBlock"] > div.element-container:has(iframe),
-            div[data-testid="stVerticalBlock"] > div.stPlotlyChart {{
-                background: rgba(255, 255, 255, 0.07);
-                backdrop-filter: blur(15px);
-                -webkit-backdrop-filter: blur(15px);
-                border-radius: 15px;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                padding: 20px;
-                margin-bottom: 20px;
+            /* Leitura de textos e títulos */
+            h1, h2, h3, p, label {{
+                color: white !important;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
             }}
 
-            /* CUSTOMIZAÇÃO DA SIDEBAR (Filtros) - Cor #b74803 */
+            /* Estilização da Sidebar (Filtros) */
             section[data-testid="stSidebar"] {{
-                background-color: rgba(183, 72, 3, 0.15); /* #b74803 com transparência */
+                background-color: rgba(0, 0, 0, 0.4);
                 backdrop-filter: blur(10px);
             }}
-            
-            section[data-testid="stSidebar"] h1, 
-            section[data-testid="stSidebar"] h2, 
-            section[data-testid="stSidebar"] label {{
-                color: #e09e50 !important; /* Destaque nos títulos da barra lateral */
-            }}
 
-            /* BOTÕES DOS FILTROS (Multiselect) - Cor #e09e50 */
+            /* Cor dos botões/tags de filtro (#e09e50) */
             span[data-baseweb="tag"] {{
                 background-color: #e09e50 !important;
                 color: white !important;
             }}
-            
-            /* Ajuste de cores de textos */
-            h1, h2, h3, p, span, label {{
+
+            /* Ajuste das Abas */
+            .stTabs [data-baseweb="tab"] p {{
                 color: white !important;
+                font-weight: bold;
+                font-size: 16px;
+            }}
+            
+            /* Rodapé fixo */
+            .custom-footer {{
+                background-color: rgba(0, 0, 0, 0.75);
+                padding: 15px;
+                border-radius: 10px;
+                text-align: center;
+                margin-top: 30px;
+                border: 1px solid rgba(255,255,255,0.1);
             }}
         </style>
         """,
@@ -79,30 +82,40 @@ def set_background(image_path: Path):
     )
 
 BASE_DIR = Path(__file__).resolve().parent
-# Certifique-se que o caminho da imagem está correto
 set_background(BASE_DIR / "assets" / "fundo.jpg")
 
 # ======================================================
-# ESTILO PADRÃO DOS GRÁFICOS
+# ESTILO PADRÃO DOS GRÁFICOS (ALTO CONTRASTE)
 # ======================================================
 def apply_plotly_layout(fig):
     fig.update_layout(
         autosize=True,
-        margin=dict(l=20, r=20, t=40, b=20),
-        paper_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=60, r=60, t=50, b=60),
+        # Efeito vidro simulado via Plotly
+        paper_bgcolor="rgba(30, 30, 30, 0.7)", 
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="white"),
+        font=dict(color="white", size=13),
         legend=dict(
-            bgcolor="rgba(0,0,0,0.2)",
-            font=dict(color="white")
+            bgcolor="rgba(0,0,0,0.6)",
+            font=dict(color="white", size=11),
+            bordercolor="rgba(255,255,255,0.2)",
+            borderwidth=1
         ),
-        xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
-        yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
+        xaxis=dict(
+            gridcolor="rgba(255,255,255,0.1)",
+            tickfont=dict(color="white", size=12),
+            title_font=dict(size=14)
+        ),
+        yaxis=dict(
+            gridcolor="rgba(255,255,255,0.1)",
+            tickfont=dict(color="white", size=12),
+            title_font=dict(size=14)
+        )
     )
     return fig
 
 # ======================================================
-# CARREGAMENTO DOS DADOS (Mantido original)
+# CARREGAMENTO DOS DADOS
 # ======================================================
 @st.cache_data
 def load_data():
@@ -117,33 +130,32 @@ def load_data():
 df = load_data()
 
 # ======================================================
-# TÍTULO E INTERFACE
+# INTERFACE PRINCIPAL
 # ======================================================
 st.title("📊 Dashboard Mercado Siderúrgico Brasileiro")
-st.markdown("Explore vendas internas, exportações, importações e consumo aparente. Fonte: Instituto Aço Brasil / MDIC.")
+st.markdown("Explore vendas internas, exportações, importações e consumo aparente. **Fonte:** Instituto Aço Brasil / MDIC.")
 
 # SIDEBAR – FILTROS
-st.sidebar.header("Configurações")
+st.sidebar.header("Filtros de Análise")
 anos = sorted(df["date"].dt.year.unique())
 anos_sel = st.sidebar.multiselect(
-    "Selecione os anos para análise:",
+    "Selecione os anos:",
     options=anos,
-    default=anos[-3:]
+    default=anos[-3:] if len(anos) >= 3 else anos
 )
 
 df_f = df[df["date"].dt.year.isin(anos_sel)] if anos_sel else df.copy()
 
-# ABAS
+# ESTRUTURA DE ABAS
 tab1, tab2, tab3 = st.tabs([
     "📦 Vendas vs Exportações",
-    "🚢 Exportação vs Importação",
+    "🚢 Fluxo Import/Export",
     "📈 Consumo Aparente"
 ])
 
 # TAB 1 - Vendas Internas vs Exportações
 with tab1:
-    st.subheader("Vendas Internas vs Exportações")
-    
+    st.subheader("Volume de Vendas Internas e Exportações")
     melt1 = df_f.melt(
         id_vars="date",
         value_vars=["vendas_internas", "exportacoes_volume"],
@@ -151,7 +163,6 @@ with tab1:
         value_name="Volume (mil t)"
     )
 
-    # Cores da paleta aplicada ao gráfico
     fig1 = px.bar(
         melt1, x="date", y="Volume (mil t)",
         color="Indicador", barmode="group",
@@ -161,12 +172,13 @@ with tab1:
         }
     )
 
+    # Linha de porcentagem (Eixo secundário)
     total = df_f["exportacoes_volume"] + df_f["vendas_internas"]
     pct = (df_f["exportacoes_volume"] / total * 100).where(total != 0, 0)
 
     fig1.add_trace(go.Scatter(
         x=df_f["date"], y=pct, name="% Exportações",
-        yaxis="y2", line=dict(dash="dash", color="#ffffff")
+        yaxis="y2", line=dict(dash="dash", color="#ffffff", width=2)
     ))
 
     fig1.update_layout(
@@ -177,8 +189,7 @@ with tab1:
 
 # TAB 2 - Exportações vs Importações
 with tab2:
-    st.subheader("Fluxo Comercial")
-    
+    st.subheader("Comparativo de Comércio Exterior")
     melt2 = df_f.melt(
         id_vars="date",
         value_vars=["exportacoes_volume", "importacoes_volume"],
@@ -189,15 +200,14 @@ with tab2:
     fig2 = px.bar(
         melt2, x="date", y="Volume (mil t)",
         color="Indicador", barmode="group",
-        color_discrete_sequence=["#b74803", "#509ee0"] # Ferrugem vs um Azul para contraste
+        color_discrete_sequence=["#b74803", "#7ca8cc"] # Ferrugem e Azul frio para contraste
     )
 
     st.plotly_chart(apply_plotly_layout(fig2), use_container_width=True, config={'displayModeBar': False})
 
-# TAB 3 - Consumo
+# TAB 3 - Consumo Aparente
 with tab3:
-    st.subheader("Consumo Aparente vs Vendas Internas")
-    
+    st.subheader("Evolução do Consumo Aparente")
     melt3 = df_f.melt(
         id_vars="date",
         value_vars=["consumo_aparente", "vendas_internas"],
@@ -209,8 +219,19 @@ with tab3:
         melt3, x="date", y="Volume (mil t)", color="Indicador",
         color_discrete_map={"consumo_aparente": "#ffffff", "vendas_internas": "#e09e50"}
     )
-
+    
     st.plotly_chart(apply_plotly_layout(fig3), use_container_width=True, config={'displayModeBar': False})
 
-st.markdown("---")
-st.caption("Elisângela de Souza | Dados atualizados até dez/2025")
+# ======================================================
+# RODAPÉ
+# ======================================================
+st.markdown(
+    """
+    <div class="custom-footer">
+        <p style="margin:0; font-size: 1rem; letter-spacing: 0.5px;">
+            <strong>Elisângela de Souza</strong> | Dados atualizados até dez/2025
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
