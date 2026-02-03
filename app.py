@@ -23,7 +23,6 @@ def set_background(image_path: Path):
     st.markdown(
         f"""
         <style>
-            /* Plano de fundo geral */
             .stApp {{
                 background-image: url(data:image/jpg;base64,{encoded});
                 background-size: cover;
@@ -35,43 +34,31 @@ def set_background(image_path: Path):
                 content: "";
                 position: fixed;
                 inset: 0;
-                background: rgba(0, 0, 0, 0.5); /* Escurece um pouco mais para contraste */
+                background: rgba(0, 0, 0, 0.55); /* Escurecemos um pouco mais para ajudar na leitura */
                 z-index: -1;
             }}
 
-            /* CORREÇÃO DO EFEITO VIDRO: Aplicando diretamente nos cards dos gráficos */
-            div[data-testid="stVerticalBlock"] > div.element-container:has(iframe),
+            /* Efeito Vidro nos Gráficos */
             div[data-testid="stVerticalBlock"] > div.stPlotlyChart {{
-                background: rgba(255, 255, 255, 0.07);
-                backdrop-filter: blur(15px);
-                -webkit-backdrop-filter: blur(15px);
-                border-radius: 15px;
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                padding: 20px;
-                margin-bottom: 20px;
-            }}
-
-            /* CUSTOMIZAÇÃO DA SIDEBAR (Filtros) - Cor #b74803 */
-            section[data-testid="stSidebar"] {{
-                background-color: rgba(183, 72, 3, 0.15); /* #b74803 com transparência */
+                background: rgba(0, 0, 0, 0.4); /* Fundo escuro leve para destacar o gráfico */
                 backdrop-filter: blur(10px);
-            }}
-            
-            section[data-testid="stSidebar"] h1, 
-            section[data-testid="stSidebar"] h2, 
-            section[data-testid="stSidebar"] label {{
-                color: #e09e50 !important; /* Destaque nos títulos da barra lateral */
+                border-radius: 15px;
+                padding: 15px;
             }}
 
-            /* BOTÕES DOS FILTROS (Multiselect) - Cor #e09e50 */
-            span[data-baseweb="tag"] {{
-                background-color: #e09e50 !important;
+            /* MELHORIA DE LEITURA: Sombra nos textos brancos */
+            h1, h2, h3, p, label, .stTabs [data-baseweb="tab"] p {{
                 color: white !important;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
             }}
-            
-            /* Ajuste de cores de textos */
-            h1, h2, h3, p, span, label {{
-                color: white !important;
+
+            /* RODAPÉ ESTILIZADO */
+            .footer-container {{
+                background: rgba(0, 0, 0, 0.6);
+                padding: 10px;
+                border-radius: 10px;
+                text-align: center;
+                margin-top: 50px;
             }}
         </style>
         """,
@@ -88,16 +75,26 @@ set_background(BASE_DIR / "assets" / "fundo.jpg")
 def apply_plotly_layout(fig):
     fig.update_layout(
         autosize=True,
-        margin=dict(l=20, r=20, t=40, b=20),
+        margin=dict(l=50, r=50, t=50, b=50),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="white"),
+        font=dict(color="white", size=14), # Aumentamos um pouco a fonte
         legend=dict(
-            bgcolor="rgba(0,0,0,0.2)",
-            font=dict(color="white")
+            bgcolor="rgba(0,0,0,0.5)",
+            font=dict(color="white", size=12),
+            bordercolor="rgba(255,255,255,0.2)",
+            borderwidth=1
         ),
-        xaxis=dict(gridcolor="rgba(255,255,255,0.1)"),
-        yaxis=dict(gridcolor="rgba(255,255,255,0.1)")
+        xaxis=dict(
+            gridcolor="rgba(255,255,255,0.1)",
+            tickfont=dict(size=12, color="white", family="Arial Black"), # Fonte mais "gorda"
+            titlefont=dict(size=14, color="white")
+        ),
+        yaxis=dict(
+            gridcolor="rgba(255,255,255,0.1)",
+            tickfont=dict(size=12, color="white", family="Arial Black"),
+            titlefont=dict(size=14, color="white")
+        )
     )
     return fig
 
@@ -213,4 +210,16 @@ with tab3:
     st.plotly_chart(apply_plotly_layout(fig3), use_container_width=True, config={'displayModeBar': False})
 
 st.markdown("---")
-st.caption("Elisângela de Souza | Dados atualizados até dez/2025")
+# ======================================================
+# RODAPÉ
+# ======================================================
+st.markdown(
+    """
+    <div class="footer-container">
+        <p style="margin:0; font-size: 0.9rem; opacity: 0.9;">
+            Elisângela de Souza | Dados atualizados até dez/2025
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
