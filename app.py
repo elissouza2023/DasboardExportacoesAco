@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # ======================================================
-# BACKGROUND + CSS AJUSTADO (reduzido padding, sem min-height fixa)
+# BACKGROUND + CSS (versão mais agressiva para forçar o glass envolver o gráfico)
 # ======================================================
 def set_background(image_path: Path):
     with open(image_path, "rb") as f:
@@ -33,8 +33,8 @@ def set_background(image_path: Path):
                 content: "";
                 position: fixed;
                 inset: 0;
-                background: rgba(0, 0, 0, 0.38);  /* um pouco mais claro que antes */
-                z-index: -1;
+                background: rgba(0, 0, 0, 0.42);
+                z-index: -2;
             }}
             section[data-testid="stSidebar"] {{
                 background-color: #f0f2f6;
@@ -42,22 +42,33 @@ def set_background(image_path: Path):
             h1, h2, h3, p, .stMarkdown {{
                 color: #ffffff !important;
             }}
-            .glass-card {{
-                background: rgba(15, 15, 25, 0.62) !important;
-                backdrop-filter: blur(14px) !important;
-                -webkit-backdrop-filter: blur(14px) !important;
-                border-radius: 16px !important;
-                padding: 1rem !important;          /* REDUZIDO para evitar espaço extra em cima */
-                margin: 1rem 0 2rem 0 !important;
-                box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55) !important;
-                border: 1px solid rgba(255, 255, 255, 0.15) !important;
-                overflow: visible !important;      /* evita corte de tooltips */
-                position: relative !important;
+            .glass-wrapper {{
+                position: relative;
+                z-index: 1;
+                margin: 1.5rem 0 2.5rem 0;
+                border-radius: 16px;
+                overflow: hidden;
             }}
-            .glass-card .stPlotlyChart {{
-                width: 100% !important;
+            .glass-card {{
+                position: absolute;
+                inset: 0;
+                background: rgba(20, 20, 35, 0.60) !important;
+                backdrop-filter: blur(16px) !important;
+                -webkit-backdrop-filter: blur(16px) !important;
+                border-radius: 16px !important;
+                border: 1px solid rgba(255, 255, 255, 0.12) !important;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+                z-index: -1;
+            }}
+            .graph-container {{
+                position: relative;
+                z-index: 2;
+                padding: 1.2rem;
+            }}
+            .graph-container .stPlotlyChart {{
                 margin: 0 !important;
                 padding: 0 !important;
+                width: 100% !important;
             }}
         </style>
         """,
@@ -73,24 +84,13 @@ set_background(BASE_DIR / "assets" / "fundo.jpg")
 def apply_plotly_layout(fig):
     fig.update_layout(
         autosize=True,
-        margin=dict(l=0, r=0, t=40, b=0),
+        margin=dict(l=20, r=20, t=50, b=20),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="white"),
-        legend=dict(
-            bgcolor="rgba(0,0,0,0)",
-            font=dict(color="white")
-        ),
-        xaxis=dict(
-            gridcolor="rgba(255,255,255,0.15)",
-            title_font_color="white",
-            tickfont_color="white"
-        ),
-        yaxis=dict(
-            gridcolor="rgba(255,255,255,0.15)",
-            title_font_color="white",
-            tickfont_color="white"
-        )
+        font=dict(color="white", size=12),
+        legend=dict(bgcolor="rgba(0,0,0,0.3)", bordercolor="rgba(255,255,255,0.2)"),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.12)", title_font_color="white", tickfont_color="white"),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.12)", title_font_color="white", tickfont_color="white")
     )
     return fig
 
@@ -110,15 +110,10 @@ def load_data():
 df = load_data()
 
 # ======================================================
-# TÍTULO PRINCIPAL
+# TÍTULO E DESCRIÇÃO
 # ======================================================
 st.title("Dashboard Mercado Siderúrgico Brasileiro")
-st.markdown(
-    """
-    Explore vendas internas, exportações, importações e consumo aparente.  
-    **Fonte:** Instituto Aço Brasil / MDIC.
-    """
-)
+st.markdown("Explore vendas internas, exportações, importações e consumo aparente.  \n**Fonte:** Instituto Aço Brasil / MDIC.")
 
 # ======================================================
 # SIDEBAR — FILTROS
@@ -130,7 +125,6 @@ anos_sel = st.sidebar.multiselect(
     options=anos,
     default=anos[-3:]
 )
-
 df_f = df[df["date"].dt.year.isin(anos_sel)] if anos_sel else df.copy()
 
 # ======================================================
@@ -143,57 +137,37 @@ tab1, tab2, tab3 = st.tabs([
 ])
 
 # ======================================================
+# FUNÇÃO AUXILIAR PARA GLASS + GRÁFICO
+# ======================================================
+def glass_plot(fig):
+    st.markdown('<div class="glass-wrapper">', unsafe_allow_html=True)
+    st.markdown('<div class="glass-card"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="graph-container">', unsafe_allow_html=True)
+    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    st.markdown('</div></div>', unsafe_allow_html=True)
+
+# ======================================================
 # TAB 1
 # ======================================================
 with tab1:
     st.subheader("Vendas Internas vs Exportações")
     
-    with st.container():
-        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        
-        melt1 = df_f.melt(
-            id_vars="date",
-            value_vars=["vendas_internas", "exportacoes_volume"],
-            var_name="Indicador",
-            value_name="Volume (mil t)"
-        )
-        
-        fig1 = px.bar(
-            melt1,
-            x="date",
-            y="Volume (mil t)",
-            color="Indicador",
-            barmode="group"
-        )
-        
-        total = df_f["exportacoes_volume"] + df_f["vendas_internas"]
-        pct = (df_f["exportacoes_volume"] / total * 100).where(total != 0, 0)
-        
-        fig1.add_trace(
-            go.Scatter(
-                x=df_f["date"],
-                y=pct,
-                name="% Exportações",
-                yaxis="y2",
-                line=dict(dash="dash", color="red")
-            )
-        )
-        
-        fig1.update_layout(
-            yaxis2=dict(
-                overlaying="y",
-                side="right",
-                title="% Exportações",
-                showgrid=False,
-                range=[-3000, 100]
-            ),
-            height=600   # Aumentado para preencher melhor
-        )
-        
-        fig1 = apply_plotly_layout(fig1)
-        st.plotly_chart(fig1, use_container_width=True, config={'displayModeBar': False})
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+    melt1 = df_f.melt(id_vars="date", value_vars=["vendas_internas", "exportacoes_volume"],
+                      var_name="Indicador", value_name="Volume (mil t)")
+    
+    fig1 = px.bar(melt1, x="date", y="Volume (mil t)", color="Indicador", barmode="group")
+    
+    total = df_f["exportacoes_volume"] + df_f["vendas_internas"]
+    pct = (df_f["exportacoes_volume"] / total * 100).where(total != 0, 0)
+    
+    fig1.add_trace(go.Scatter(x=df_f["date"], y=pct, name="% Exportações", yaxis="y2",
+                              line=dict(dash="dash", color="red")))
+    
+    fig1.update_layout(yaxis2=dict(overlaying="y", side="right", title="% Exportações",
+                                   showgrid=False, range=[-3000, 100]))
+    
+    fig1 = apply_plotly_layout(fig1)
+    glass_plot(fig1)
 
 # ======================================================
 # TAB 2
@@ -201,50 +175,20 @@ with tab1:
 with tab2:
     st.subheader("Exportações vs Importações")
     
-    with st.container():
-        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        
-        melt2 = df_f.melt(
-            id_vars="date",
-            value_vars=["exportacoes_volume", "importacoes_volume"],
-            var_name="Indicador",
-            value_name="Volume (mil t)"
-        )
-        
-        fig2 = px.bar(
-            melt2,
-            x="date",
-            y="Volume (mil t)",
-            color="Indicador",
-            barmode="group"
-        )
-        
-        saldo = df_f["exportacoes_volume"] - df_f["importacoes_volume"]
-        
-        fig2.add_trace(
-            go.Scatter(
-                x=df_f["date"],
-                y=saldo,
-                name="Saldo Comercial",
-                yaxis="y2",
-                line=dict(color="cyan")
-            )
-        )
-        
-        fig2.update_layout(
-            yaxis2=dict(
-                overlaying="y",
-                side="right",
-                title="Saldo (mil t)",
-                showgrid=False
-            ),
-            height=600
-        )
-        
-        fig2 = apply_plotly_layout(fig2)
-        st.plotly_chart(fig2, use_container_width=True, config={'displayModeBar': False})
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+    melt2 = df_f.melt(id_vars="date", value_vars=["exportacoes_volume", "importacoes_volume"],
+                      var_name="Indicador", value_name="Volume (mil t)")
+    
+    fig2 = px.bar(melt2, x="date", y="Volume (mil t)", color="Indicador", barmode="group")
+    
+    saldo = df_f["exportacoes_volume"] - df_f["importacoes_volume"]
+    
+    fig2.add_trace(go.Scatter(x=df_f["date"], y=saldo, name="Saldo Comercial", yaxis="y2",
+                              line=dict(color="cyan")))
+    
+    fig2.update_layout(yaxis2=dict(overlaying="y", side="right", title="Saldo (mil t)", showgrid=False))
+    
+    fig2 = apply_plotly_layout(fig2)
+    glass_plot(fig2)
 
 # ======================================================
 # TAB 3
@@ -252,28 +196,12 @@ with tab2:
 with tab3:
     st.subheader("Consumo Aparente vs Vendas Internas")
     
-    with st.container():
-        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        
-        melt3 = df_f.melt(
-            id_vars="date",
-            value_vars=["consumo_aparente", "vendas_internas"],
-            var_name="Indicador",
-            value_name="Volume (mil t)"
-        )
-        
-        fig3 = px.line(
-            melt3,
-            x="date",
-            y="Volume (mil t)",
-            color="Indicador"
-        )
-        
-        fig3.update_layout(height=600)
-        fig3 = apply_plotly_layout(fig3)
-        st.plotly_chart(fig3, use_container_width=True, config={'displayModeBar': False})
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+    melt3 = df_f.melt(id_vars="date", value_vars=["consumo_aparente", "vendas_internas"],
+                      var_name="Indicador", value_name="Volume (mil t)")
+    
+    fig3 = px.line(melt3, x="date", y="Volume (mil t)", color="Indicador")
+    fig3 = apply_plotly_layout(fig3)
+    glass_plot(fig3)
 
 # ======================================================
 # RODAPÉ
