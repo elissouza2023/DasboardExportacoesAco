@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # ======================================================
-# BACKGROUND + CSS AJUSTADO
+# BACKGROUND + CSS AJUSTADO (reduzido padding, sem min-height fixa)
 # ======================================================
 def set_background(image_path: Path):
     with open(image_path, "rb") as f:
@@ -33,7 +33,7 @@ def set_background(image_path: Path):
                 content: "";
                 position: fixed;
                 inset: 0;
-                background: rgba(0, 0, 0, 0.45);  /* overlay mais forte para contraste */
+                background: rgba(0, 0, 0, 0.38);  /* um pouco mais claro que antes */
                 z-index: -1;
             }}
             section[data-testid="stSidebar"] {{
@@ -43,21 +43,19 @@ def set_background(image_path: Path):
                 color: #ffffff !important;
             }}
             .glass-card {{
-                background: rgba(15, 15, 25, 0.65) !important;
+                background: rgba(15, 15, 25, 0.62) !important;
                 backdrop-filter: blur(14px) !important;
                 -webkit-backdrop-filter: blur(14px) !important;
                 border-radius: 16px !important;
-                padding: 1.5rem !important;
-                margin: 1.5rem 0 2.5rem 0 !important;
-                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6) !important;
-                border: 1px solid rgba(255, 255, 255, 0.18) !important;
-                overflow: hidden !important;
+                padding: 1rem !important;          /* REDUZIDO para evitar espaço extra em cima */
+                margin: 1rem 0 2rem 0 !important;
+                box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55) !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                overflow: visible !important;      /* evita corte de tooltips */
                 position: relative !important;
-                min-height: 520px !important;
             }}
-            .glass-card > div[data-testid="stPlotlyChart"] {{
+            .glass-card .stPlotlyChart {{
                 width: 100% !important;
-                height: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }}
@@ -130,7 +128,7 @@ anos = sorted(df["date"].dt.year.unique())
 anos_sel = st.sidebar.multiselect(
     "Selecione os anos",
     options=anos,
-    default=anos[-3:]  # últimos 3 anos por padrão
+    default=anos[-3:]
 )
 
 df_f = df[df["date"].dt.year.isin(anos_sel)] if anos_sel else df.copy()
@@ -145,7 +143,7 @@ tab1, tab2, tab3 = st.tabs([
 ])
 
 # ======================================================
-# TAB 1 — Vendas Internas vs Exportações
+# TAB 1
 # ======================================================
 with tab1:
     st.subheader("Vendas Internas vs Exportações")
@@ -187,9 +185,9 @@ with tab1:
                 side="right",
                 title="% Exportações",
                 showgrid=False,
-                range=[-3000, 100]  # ajuste se o % negativo cortar muito
+                range=[-3000, 100]
             ),
-            height=550
+            height=600   # Aumentado para preencher melhor
         )
         
         fig1 = apply_plotly_layout(fig1)
@@ -198,7 +196,7 @@ with tab1:
         st.markdown('</div>', unsafe_allow_html=True)
 
 # ======================================================
-# TAB 2 — Exportações vs Importações
+# TAB 2
 # ======================================================
 with tab2:
     st.subheader("Exportações vs Importações")
@@ -240,7 +238,7 @@ with tab2:
                 title="Saldo (mil t)",
                 showgrid=False
             ),
-            height=550
+            height=600
         )
         
         fig2 = apply_plotly_layout(fig2)
@@ -249,7 +247,7 @@ with tab2:
         st.markdown('</div>', unsafe_allow_html=True)
 
 # ======================================================
-# TAB 3 — Consumo Aparente vs Vendas Internas
+# TAB 3
 # ======================================================
 with tab3:
     st.subheader("Consumo Aparente vs Vendas Internas")
@@ -271,7 +269,7 @@ with tab3:
             color="Indicador"
         )
         
-        fig3.update_layout(height=550)
+        fig3.update_layout(height=600)
         fig3 = apply_plotly_layout(fig3)
         st.plotly_chart(fig3, use_container_width=True, config={'displayModeBar': False})
         
