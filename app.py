@@ -5,14 +5,9 @@ import plotly.graph_objects as go
 from pathlib import Path
 import base64
 
-# ======================================================
-# CONFIGURAÇÃO DA PÁGINA
-# ======================================================
 st.set_page_config(page_title="Dashboard Mercado Siderúrgico Brasileiro", layout="wide")
 
-# ======================================================
-# BACKGROUND + CSS (estratégia invertida: vidro atrás do gráfico)
-# ======================================================
+# BACKGROUND + CSS SIMPLES E EFICAZ
 def set_background(image_path: Path):
     with open(image_path, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()
@@ -30,36 +25,21 @@ def set_background(image_path: Path):
                 content: "";
                 position: fixed;
                 inset: 0;
-                background: rgba(0, 0, 0, 0.40);
-                z-index: -2;
+                background: rgba(0, 0, 0, 0.45);
+                z-index: -1;
             }}
-            .plot-wrapper {{
-                position: relative;
-                margin: 1.5rem 0 2.5rem 0;
-                border-radius: 16px;
-                overflow: hidden;
-                background: transparent;
+            .glass-section {{
+                background: rgba(30, 30, 50, 0.55) !important;
+                backdrop-filter: blur(12px) !important;
+                -webkit-backdrop-filter: blur(12px) !important;
+                border-radius: 16px !important;
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+                padding: 1.5rem !important;
+                margin: 1.5rem 0 !important;
             }}
-            .plot-glass {{
-                position: absolute;
-                inset: 0;
-                background: rgba(20, 20, 35, 0.58);
-                backdrop-filter: blur(14px);
-                -webkit-backdrop-filter: blur(14px);
-                border: 1px solid rgba(255, 255, 255, 0.14);
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-                border-radius: 16px;
-                z-index: 0;
-                pointer-events: none;
-            }}
-            .plot-content {{
-                position: relative;
-                z-index: 1;
-                padding: 1.2rem 1.5rem;
-            }}
-            .plot-content > div[data-testid="stPlotlyChart"] {{
+            .glass-section .stPlotlyChart {{
                 margin: 0 !important;
-                width: 100% !important;
             }}
             h1, h2, h3, p {{
                 color: white !important;
@@ -72,25 +52,19 @@ def set_background(image_path: Path):
 BASE_DIR = Path(__file__).resolve().parent
 set_background(BASE_DIR / "assets" / "fundo.jpg")
 
-# ======================================================
-# ESTILO PLOTLY
-# ======================================================
 def apply_plotly_layout(fig):
     fig.update_layout(
         autosize=True,
-        margin=dict(l=20, r=30, t=50, b=40),
+        margin=dict(l=10, r=30, t=50, b=30),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="white"),
-        legend=dict(bgcolor="rgba(0,0,0,0.4)", font=dict(color="white")),
-        xaxis=dict(gridcolor="rgba(255,255,255,0.15)", title_font_color="white", tickfont_color="white"),
-        yaxis=dict(gridcolor="rgba(255,255,255,0.15)", title_font_color="white", tickfont_color="white")
+        legend=dict(bgcolor="rgba(0,0,0,0.3)", font=dict(color="white")),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.2)", title_font_color="white", tickfont_color="white"),
+        yaxis=dict(gridcolor="rgba(255,255,255,0.2)", title_font_color="white", tickfont_color="white")
     )
     return fig
 
-# ======================================================
-# DADOS
-# ======================================================
 @st.cache_data
 def load_data():
     data_path = BASE_DIR / "data" / "processed" / "dados_siderurgia_limpos_2013_2025.csv"
@@ -103,36 +77,24 @@ def load_data():
 
 df = load_data()
 
-# TÍTULO
 st.title("Dashboard Mercado Siderúrgico Brasileiro")
 st.markdown("Explore vendas internas, exportações, importações e consumo aparente.  \n**Fonte:** Instituto Aço Brasil / MDIC.")
 
-# SIDEBAR
 st.sidebar.header("Filtros")
 anos = sorted(df["date"].dt.year.unique())
 anos_sel = st.sidebar.multiselect("Selecione os anos", options=anos, default=anos[-3:])
 df_f = df[df["date"].dt.year.isin(anos_sel)] if anos_sel else df.copy()
 
-# TABS
 tab1, tab2, tab3 = st.tabs([
     "Vendas Internas vs Exportações",
     "Exportações vs Importações",
     "Consumo Aparente vs Vendas Internas"
 ])
 
-# ======================================================
-# FUNÇÃO PARA PLOT COM VIDRO
-# ======================================================
-def plot_with_glass(fig):
-    st.markdown('<div class="plot-wrapper">', unsafe_allow_html=True)
-    st.markdown('<div class="plot-glass"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="plot-content">', unsafe_allow_html=True)
-    st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-    st.markdown('</div></div>', unsafe_allow_html=True)
-
 # TAB 1
 with tab1:
     st.subheader("Vendas Internas vs Exportações")
+    st.markdown('<div class="glass-section">', unsafe_allow_html=True)
     
     melt1 = df_f.melt(id_vars="date", value_vars=["vendas_internas", "exportacoes_volume"],
                       var_name="Indicador", value_name="Volume (mil t)")
@@ -147,11 +109,14 @@ with tab1:
     fig1.update_layout(yaxis2=dict(overlaying="y", side="right", title="% Exportações",
                                    showgrid=False, range=[-3000, 100]))
     fig1 = apply_plotly_layout(fig1)
-    plot_with_glass(fig1)
+    st.plotly_chart(fig1, use_container_width=True, config={'displayModeBar': False})
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# TAB 2
+# TAB 2 (igual, só muda os dados)
 with tab2:
     st.subheader("Exportações vs Importações")
+    st.markdown('<div class="glass-section">', unsafe_allow_html=True)
     
     melt2 = df_f.melt(id_vars="date", value_vars=["exportacoes_volume", "importacoes_volume"],
                       var_name="Indicador", value_name="Volume (mil t)")
@@ -164,18 +129,22 @@ with tab2:
     
     fig2.update_layout(yaxis2=dict(overlaying="y", side="right", title="Saldo (mil t)", showgrid=False))
     fig2 = apply_plotly_layout(fig2)
-    plot_with_glass(fig2)
+    st.plotly_chart(fig2, use_container_width=True, config={'displayModeBar': False})
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # TAB 3
 with tab3:
     st.subheader("Consumo Aparente vs Vendas Internas")
+    st.markdown('<div class="glass-section">', unsafe_allow_html=True)
     
     melt3 = df_f.melt(id_vars="date", value_vars=["consumo_aparente", "vendas_internas"],
                       var_name="Indicador", value_name="Volume (mil t)")
     fig3 = px.line(melt3, x="date", y="Volume (mil t)", color="Indicador")
     fig3 = apply_plotly_layout(fig3)
-    plot_with_glass(fig3)
+    st.plotly_chart(fig3, use_container_width=True, config={'displayModeBar': False})
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# RODAPÉ
 st.markdown("---")
 st.caption("Elisângela de Souza | Dados atualizados até dez/2025")
