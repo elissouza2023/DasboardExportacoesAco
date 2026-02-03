@@ -29,17 +29,21 @@ def set_background(image_path: Path):
                 z-index: -1;
             }}
             .glass-section {{
-                background: rgba(30, 30, 50, 0.55) !important;
-                backdrop-filter: blur(12px) !important;
-                -webkit-backdrop-filter: blur(12px) !important;
-                border-radius: 16px !important;
-                border: 1px solid rgba(255, 255, 255, 0.15) !important;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
-                padding: 1.5rem !important;
-                margin: 1.5rem 0 !important;
+                background: rgba(30, 30, 50, 0.60) !important;   /* um pouco mais opaco */
+                backdrop-filter: blur(14px) !important;
+                -webkit-backdrop-filter: blur(14px) !important;
+                border-radius: 18px !important;
+                border: 1px solid rgba(255, 255, 255, 0.18) !important;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.55) !important;
+                padding: 2rem !important;                        /* mais espaço interno */
+                margin: 1.5rem 0 3rem 0 !important;
+                min-height: 620px !important;                    /* força altura mínima */
+                overflow: visible !important;
+                display: block !important;
             }}
             .glass-section .stPlotlyChart {{
                 margin: 0 !important;
+                width: 100% !important;
             }}
             h1, h2, h3, p {{
                 color: white !important;
