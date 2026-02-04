@@ -239,7 +239,7 @@ st.markdown(
     """
     <div class="custom-footer">
         <p style="margin:0; font-size: 1rem;">
-            <strong>Elisângela de Souza</strong> | Dados atualizados até dez/2025
+            <strong>Elisângela de Souza</strong> | Dados atualizados até dez/2025 |  Fonte oficial: Instituto Aço Brasil
         </p>
     </div>
     """,
