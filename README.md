@@ -13,7 +13,7 @@ Demonstrar competências em **Análise de Dados** e **Visualização** aplicadas
 
 ### 🏭 Contexto dos Dados
 - **Fonte oficial**: [Instituto Aço Brasil](https://www.acobrasil.org.br/site/estatistica-mensal)  
-- **Período coberto**: Janeiro/2013 a Dezembro/2025 (atualizado mensalmente)  
+- **Período coberto**: Janeiro/2013 a Janeiro/2026 (atualizado mensalmente)  
 - **Granularidade**: Mensal (mil toneladas)  
 - **Principais indicadores**:
   - Produção de aço bruto
