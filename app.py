@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # ======================================================
-# BACKGROUND + CSS (ESTÁVEL E SEGURO)
+# BACKGROUND + CSS 
 # ======================================================
 def set_background(image_path: Path):
     if not image_path.exists():
@@ -105,7 +105,7 @@ BASE_DIR = Path(__file__).resolve().parent
 set_background(BASE_DIR / "assets" / "fundo.jpg")
 
 # ======================================================
-# ESTILO PADRÃO DOS GRÁFICOS (ALTO CONTRASTE)
+# ESTILO PADRÃO DOS GRÁFICOS 
 # ======================================================
 def apply_plotly_layout(fig):
     fig.update_layout(
