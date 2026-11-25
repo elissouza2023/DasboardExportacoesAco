@@ -158,8 +158,6 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
 
   - Aplicação executada em ambiente virtual Python (.venv).
 
-Observação de segurança: as regras de iptables adicionadas manualmente para as portas 80 e 443 ainda precisam de configuração persistente após reinicializações da VM. A persistência e o teste de recuperação do firewall fazem parte das próximas etapas de hardening.
-
 ---
 ### ▶️ Como Executar Localmente
 
