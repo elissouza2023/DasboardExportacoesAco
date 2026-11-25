@@ -182,6 +182,7 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
  ```bash
     streamlit run app.py
  ```
+---
 ## ⚙️Gerenciamento da aplicação na OCI
 
 Na infraestrutura Oracle Cloud, a aplicação é executada em uma máquina virtual Ubuntu e gerenciada pelo systemd, recurso do Linux que permite controlar serviços e configurar sua inicialização automática.
