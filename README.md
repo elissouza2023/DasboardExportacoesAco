@@ -126,7 +126,7 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
 
   - Portas HTTP (80) e HTTPS (443) liberadas para acesso público.
 
--**2. Segurança no Ubuntu**
+- **2. Segurança no Ubuntu**
 
   - Regras de firewall com iptables.
 
@@ -138,7 +138,7 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
 
   - Aplicação Streamlit executada em 127.0.0.1, acessível externamente somente por meio do Nginx.
 
--**3. Comunicação criptografada**
+- **3. Comunicação criptografada**
 
   - Certificado SSL/TLS emitido gratuitamente pela Let's Encrypt.
 
@@ -148,7 +148,7 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
 
   - Renovação automática do certificado programada pelo Certbot.
 
--**4. Gerenciamento da aplicação**
+- **4. Gerenciamento da aplicação**
 
   - Serviço systemd para execução do Streamlit em segundo plano.
 
