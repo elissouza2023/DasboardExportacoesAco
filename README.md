@@ -25,6 +25,8 @@
 ### 🎯 Objetivo
 Demonstrar competências em **Análise de Dados** e **Visualização** aplicadas a um setor industrial estratégico, utilizando dados reais, tratamento robusto e interface amigável para suporte à tomada de decisão.
 
+---
+
 ### 🏭 Contexto dos Dados
 - **Fonte oficial**: [Instituto Aço Brasil](https://www.acobrasil.org.br/site/estatistica-mensal)  
 - **Período coberto**: Janeiro/2013 a Outubro/2026 (atualizado mensalmente)  
