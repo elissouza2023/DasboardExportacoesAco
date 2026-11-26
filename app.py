@@ -116,7 +116,8 @@ def apply_plotly_layout(fig):
         legend=dict(
             bgcolor="rgba(0,0,0,0.5)",
             bordercolor="rgba(255,255,255,0.2)",
-            borderwidth=1
+            borderwidth=1,
+            font=dict(color="white")
         ),
         xaxis=dict(
             gridcolor="rgba(255,255,255,0.08)",
