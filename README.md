@@ -12,6 +12,8 @@
 [![Nginx](https://img.shields.io/badge/Nginx-Reverse%20Proxy-009639?logo=nginx&logoColor=white)](https://nginx.org/)
 [![HTTPS](https://img.shields.io/badge/HTTPS-TLS%20Enabled-success?logo=letsencrypt&logoColor=white)](https://letsencrypt.org/)
 [![GitHub](https://img.shields.io/badge/GitHub-Version%20Control-181717?logo=github&logoColor=white)](https://github.com/)
+[![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)](https://github.com/features/actions)
+[![SQLite](https://img.shields.io/badge/SQLite-Audit%20Log-003B57?logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 
 [![Streamlit Community Cloud](https://img.shields.io/badge/Deploy-Streamlit%20Community%20Cloud-FF4B4B?logo=streamlit&logoColor=white)](https://mercadosiderurgicobr.streamlit.app/)
 [![Oracle Cloud Deployment](https://img.shields.io/badge/Deploy-Oracle%20Cloud-F80000?logo=oracle&logoColor=white)](https://mercadosiderurgicobr.duckdns.org/)
