@@ -50,8 +50,8 @@ Os dados são originalmente em formato XLS e processados para CSV limpo e otimiz
 
 📦 dashboard-exportacoes-aco
 │
-├── .github/
-│   └── 📄 workflows/
+📁 .github/
+│   └── 📁 workflows/
 │       └── 📄 main.yml
 📁 data
 ├── 📁 raw # Planilhas originais baixadas
