@@ -298,7 +298,7 @@ Essa configuração permite manter o dashboard em execução independentemente d
 
 ## 👩‍💻 Sobre a Autora
 
-Projeto desenvolvido por Elisângela de Souza, com foco em Análise de Dados aplicada ao setor industrial, unindo interesses em:
+Projeto desenvolvido por Elisângela de Souza, com foco em Análise de Dados aplicada ao setor siderúrgico, unindo interesses em:
 
 
 - Análise de dados industriais
