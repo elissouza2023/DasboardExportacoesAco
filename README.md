@@ -51,22 +51,13 @@ Os dados são originalmente em formato XLS e processados para CSV limpo e otimiz
 📁 data
 ├── 📁 raw # Planilhas originais baixadas
 │   └── Performance-Mensal_2025*.*.xls
-├── 📁 interim   
-│   
 └── 📁 processed  
-│    └── exportacoes_aco_mensal_long.csv
-│
-├── 📁 src
-│   ├── 📁 utils
-│   │   └── data_processing.py
-│   │
-│   ├── 📁 assets
-│   │   └── logo.png
-│   │
-│   └── 📁 visuals
-│       └── charts.py
-│
-├── 📁 notebooks  
+│    └── dados_siderurgia_limpos_2013_2025.csv
+│    └── dados_siderurgia_limpos_2025.csv
+📁 assets
+└── logo.png
+│   
+📁 notebooks  
 │   └── exploracao_dados.ipynb
 │
 ├── 📄 app.py   
