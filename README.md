@@ -23,7 +23,9 @@
 
 
 ### 🎯 Objetivo
-Demonstrar competências em **Análise de Dados** e **Visualização** aplicadas a um setor industrial estratégico, utilizando dados reais, tratamento robusto e interface amigável para suporte à tomada de decisão.
+Demonstrar competências em **Análise de Dados** , **Visualização** **e Infraestrutura em Nuvem** aplicadas a um setor industrial estratégico.
+  O projeto utiliza dados públicos do setor siderúrgico brasileiro, com tratamento e organização dos dados, visualizações interativas e disponibilização de uma aplicação web em duas plataformas de hospedagem.
+  Também contempla práticas de administração Linux, segurança de infraestrutura e automação de implantação contínua (CI/CD).
 
 ---
 
@@ -48,6 +50,9 @@ Os dados são originalmente em formato XLS e processados para CSV limpo e otimiz
 
 📦 dashboard-exportacoes-aco
 │
+├── .github/
+│   └── 📄 workflows/
+│       └── 📄 main.yml
 📁 data
 ├── 📁 raw # Planilhas originais baixadas
 │   └── Performance-Mensal_2025*.*.xls
@@ -84,14 +89,19 @@ Os dados são originalmente em formato XLS e processados para CSV limpo e otimiz
 ### 🛠️ Tecnologias Utilizadas
 - **Linguagem**: Python 3.12
 - **Manipulação de dados**: Pandas, NumPy
-- **Visualização**: Plotly (interativo)
+- **Visualização**: Plotly (interativo) e Matplotlib
 - **Dashboard**: Streamlit
 - **Versionamento**: Git + GitHub
-- **Hospedagem **: Streamlit Cloud & Oracle Cloud (OCI)
+- **Hospedagem**: Streamlit Cloud & Oracle Cloud (OCI)
 - **Servidor web / Proxy reverso**: Nginx.
 - **Gerenciamento de processos**: systemd
 - **DNS**: DuckDNS
 - **Certificado digital**: Let's Encrypt / Certbot
+- **CI/CD**: GitHub Actions
+- **Automação de implantação**: Python, Bash e GitHub Actions
+- **Segurança de notificações**: HMAC-SHA256
+- **Registro de notificações**: SQLite
+  
 ---
 ### ☁️ Arquitetura Cloud 
 
@@ -99,7 +109,88 @@ O projeto foi disponibilizado em duas plataformas de hospedagem em nuvem, demons
 
 - **Streamlit Community Cloud:** hospedagem simplificada e integrada ao GitHub, utilizando a infraestrutura gerenciada da própria plataforma.
 
-- **Oracle Cloud Infrastructure (OCI):** implantação em máquina virtual Linux, com administração do servidor Ubuntu, configuração de rede, Nginx como proxy reverso, gerenciamento de processos com systemd e comunicação segura via HTTPS.
+- **Oracle Cloud Infrastructure (OCI):** implantação em máquina virtual Linux, com administração do servidor Ubuntu, configuração de rede, Nginx como proxy reverso, gerenciamento de processos com systemd, comunicação segura via HTTPS e automação da implantação via GitHub Actions.
+---
+### 🔄 CI/CD — Implantação Automatizada na OCI
+
+O projeto utiliza GitHub Actions para automatizar a atualização da aplicação na VM Oracle Cloud sempre que uma alteração é publicada na branch main.
+
+O processo utiliza um receptor de webhook próprio, desenvolvido em Python, evitando a necessidade de disponibilizar acesso SSH aos servidores de execução do GitHub Actions.
+
+Fluxo de implantação
+
+- **flowchart TD**
+
+  
+    A["Desenvolvedor publica alteração"] --> B["GitHub - Branch main"]
+    B --> C["GitHub Actions"]
+    C --> D["Geração da assinatura HMAC-SHA256"]
+    D --> E["HTTPS - Nginx"]
+    E --> F["Receptor Python - DeployHook"]
+    F --> G["Validação da assinatura e autorização"]
+    G --> H["Script de implantação controlado"]
+    H --> I["Git Pull --ff-only"]
+    I --> J["Reinicialização via systemd"]
+    J --> K["Dashboard atualizado na OCI"]
+
+**Componentes de automação**
+
+- GitHub Actions
+
+- Acionamento automático por publicação na branch main;
+
+- Uso de segredo armazenado em Repository Secrets;
+
+- Geração de assinatura HMAC-SHA256;
+
+- Envio de notificação autenticada por HTTPS.
+
+- Receptor Python (DeployHook)
+
+- Serviço independente gerenciado pelo systemd;
+
+- Escuta exclusivamente em 127.0.0.1:9000;
+
+- Validação da assinatura HMAC-SHA256;
+
+- Verificação do evento, repositório e branch autorizados;
+
+- Controle de notificações duplicadas utilizando SQLite;
+
+- Encaminhamento somente para um script de implantação previamente definido.
+
+**Script de implantação**
+
+- Execução com privilégios controlados;
+
+- Validação da branch e do repositório;
+
+- Verificação de alterações locais antes da atualização;
+
+- Atualização por git pull --ff-only;
+
+- Reinicialização do serviço Streamlit;
+
+- Verificação do estado do serviço após a implantação.
+
+**Segurança da automação**
+
+- Comunicação externa protegida por HTTPS;
+
+- Autenticação das notificações por HMAC-SHA256;
+
+- Segredo armazenado no GitHub Actions Secrets e na VM, sem exposição no código-fonte;
+
+- Serviço receptor executado com usuário Linux dedicado;
+
+- Permissão sudo restrita ao script de implantação autorizado;
+
+- Porta não exposta diretamente à internet;
+
+- Porta SSH não precisa ser aberta aos endereços dos runners do GitHub.
+
+A publicação no Streamlit Community Cloud permanece independente e continua vinculada ao repositório GitHub.
+  
 ---
 ### 🔐 Segurança da Infraestrutura
 
@@ -116,8 +207,6 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
   - Security List com regras específicas de entrada.
 
   - Acesso SSH restrito ao endereço IP público autorizado.
-
-  - Portas liberadas para acesso público.
 
 **2. Segurança no Ubuntu**
 
@@ -150,6 +239,8 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
   - Política de reinicialização automática do processo em caso de falha.
 
   - Aplicação executada em ambiente virtual Python (.venv).
+    
+  - Logs de serviços disponíveis pelo journalctl.
 
 ---
 ### ▶️ Como Executar Localmente
@@ -173,6 +264,9 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
  ```bash
     streamlit run app.py
  ```
+
+A aplicação poderá ser acessada localmente pelo endereço: http://localhost:8501
+
 ---
 ## ⚙️Gerenciamento da aplicação na OCI
 
@@ -184,23 +278,22 @@ Essa configuração permite manter o dashboard em execução independentemente d
 
 ## 🔄 Próximos Passos (Evolução do Projeto)
 
-- Automatizar a atualização dos dados mensais
+- Automatizar a coleta mensal dos dados do Instituto Aço Brasil;
 
-- Integração com n8n para:
+- Integrar n8n para processamento e atualização do dataset;
 
-- Coleta automática da planilha no site oficial
+- Ampliar os indicadores e KPIs do setor siderúrgico;
 
-- Atualização do dataset no repositório
+- Implementar persistência das regras de firewall;
 
-- Inclusão de novos KPIs do setor siderúrgico
-  
-- Implementar persistência das regras de firewall do Ubuntu.
+- Avaliar OCI Bastion para administração segura da VM;
 
-- Avaliar o uso do OCI Bastion para administração segura da VM.
+- Realizar testes de recuperação após reinicialização da instância;
 
-- Realizar testes de recuperação após reinicialização da instância.
+- Executar testes de renovação do certificado HTTPS;
 
 - Aprimorar monitoramento, logs e hardening do servidor.
+  
 ---
 
 ## 👩‍💻 Sobre a Autora
@@ -211,11 +304,12 @@ Projeto desenvolvido por Elisângela de Souza, com foco em Análise de Dados apl
 - Análise de dados industriais
 - Setor siderúrgico e commodities
 - Visualização e storytelling com dados
-- Automação de processos (n8n, GitHub Actions)
+- Automação de processos 
 - Inteligência Artificial aplicada
 - Engenharia e indústria
 - Segurança da informação
 - Infraestrutura e computação em nuvem (OCI)
+- Desenvolvimento Python e tecnologias web
   
 ---
 
