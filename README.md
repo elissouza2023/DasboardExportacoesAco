@@ -121,7 +121,17 @@ O processo utiliza um receptor de webhook próprio, desenvolvido em Python, evit
 
 Fluxo de implantação
 ```mermaid
-
+flowchart TD
+    A["Desenvolvedor publica alteração"] --> B["GitHub - Branch main"]
+    B --> C["GitHub Actions"]
+    C --> D["Geração da assinatura HMAC-SHA256"]
+    D --> E["HTTPS - Nginx"]
+    E --> F["Receptor Python - DeployHook"]
+    F --> G["Validação da assinatura e autorização"]
+    G --> H["Script de implantação controlado"]
+    H --> I["Git Pull --ff-only"]
+    I --> J["Reinicialização via systemd"]
+    J --> K["Dashboard atualizado na OCI"]
     A["Desenvolvedor publica alteração"] --> B["GitHub - Branch main"]
     B --> C["GitHub Actions"]
     C --> D["Geração da assinatura HMAC-SHA256"]
@@ -323,8 +333,8 @@ O projeto demonstra a integração entre análise de dados, desenvolvimento Pyth
 
 ## ▶️ Deploy
 
-https://mercadosiderurgicobr.streamlit.app
-https://mercadosiderurgicobr.duckdns.org
+- **Streamlit Community Cloud:** [mercadosiderurgicobr.streamlit.app](https://mercadosiderurgicobr.streamlit.app)
+- **Oracle Cloud Infrastructure (OCI):** [mercadosiderurgicobr.duckdns.org](https://mercadosiderurgicobr.duckdns.org)
 
 ---
 <p align="center" style="font-family: 'Monotype Corsiva', cursive; font-size: 12pt;">
