@@ -60,6 +60,28 @@ def set_background(image_path: Path):
                 backdrop-filter: blur(10px);
             }}
 
+            /* ===== BOTÃO ATUALIZAR DADOS ===== */
+            section[data-testid="stSidebar"] button {{
+                background-color: transparent !important;
+                border: 1px solid rgba(255, 255, 255, 0.7) !important;
+                color: white !important;
+                border-radius: 8px !important;
+            }}
+
+            section[data-testid="stSidebar"] button:hover {{
+                background-color: rgba(255, 255, 255, 0.12) !important;
+                border: 1px solid white !important;
+                color: white !important;
+            }}
+
+            section[data-testid="stSidebar"] button:focus {{
+                background-color: rgba(255, 255, 255, 0.12) !important;
+                border: 1px solid white !important;
+                color: white !important;
+                box-shadow: none !important;
+            }}
+            /* ================================ */
+
             [data-testid="stMetric"] {{
                 background: rgba(255,255,255,0.06);
                 border-left: 5px solid #b74803;
