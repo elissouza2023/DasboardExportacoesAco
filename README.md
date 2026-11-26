@@ -115,21 +115,21 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
 
   - Security List com regras específicas de entrada.
 
-  - Acesso SSH (porta 22) restrito ao endereço IP público autorizado, utilizando máscara /32.
+  - Acesso SSH restrito ao endereço IP público autorizado.
 
-  - Portas HTTP (80) e HTTPS (443) liberadas para acesso público.
+  - Portas liberadas para acesso público.
 
 **2. Segurança no Ubuntu**
 
   - Regras de firewall com iptables.
 
-  - Portas 22, 80 e 443 autorizadas conforme a necessidade do serviço.
+  - Portas autorizadas conforme a necessidade do serviço.
 
   - Rejeição de conexões de entrada não contempladas pelas regras.
 
-  - Porta 8501 não exposta diretamente à internet.
+  - Portas não expostas diretamente à internet.
 
-  - Aplicação Streamlit executada em 127.0.0.1, acessível externamente somente por meio do Nginx.
+  - Aplicação Streamlit acessível externamente somente por meio do Nginx.
 
 **3. Comunicação criptografada**
 
