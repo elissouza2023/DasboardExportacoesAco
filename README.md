@@ -132,7 +132,7 @@ Fluxo de implantação
     H --> I["Git Pull --ff-only"]
     I --> J["Reinicialização via systemd"]
     J --> K["Dashboard atualizado na OCI"]
- ```   
+````  
 **Componentes de automação**
 
 - GitHub Actions
