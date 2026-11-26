@@ -120,10 +120,8 @@ O projeto utiliza GitHub Actions para automatizar a atualização da aplicação
 O processo utiliza um receptor de webhook próprio, desenvolvido em Python, evitando a necessidade de disponibilizar acesso SSH aos servidores de execução do GitHub Actions.
 
 Fluxo de implantação
+```mermaid
 
-- **flowchart TD**
-
-  
     A["Desenvolvedor publica alteração"] --> B["GitHub - Branch main"]
     B --> C["GitHub Actions"]
     C --> D["Geração da assinatura HMAC-SHA256"]
@@ -134,7 +132,7 @@ Fluxo de implantação
     H --> I["Git Pull --ff-only"]
     I --> J["Reinicialização via systemd"]
     J --> K["Dashboard atualizado na OCI"]
-
+ ```   
 **Componentes de automação**
 
 - GitHub Actions
@@ -150,8 +148,6 @@ Fluxo de implantação
 - Receptor Python (DeployHook)
 
 - Serviço independente gerenciado pelo systemd;
-
-- Escuta exclusivamente em 127.0.0.1:9000;
 
 - Validação da assinatura HMAC-SHA256;
 
@@ -224,7 +220,7 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
 
 **3. Comunicação criptografada**
 
-  - Certificado SSL/TLS emitido gratuitamente pela Let's Encrypt.
+  - Certificado SSL/TLS emitido pela Let's Encrypt.
 
   - Instalação e configuração automatizadas pelo Certbot.
 
@@ -284,7 +280,7 @@ Essa configuração permite manter o dashboard em execução independentemente d
 
 - Integrar n8n para processamento e atualização do dataset;
 
-- Ampliar os indicadores e KPIs do setor siderúrgico;
+- Ampliar outros indicadores e KPIs do setor siderúrgico;
 
 - Implementar persistência das regras de firewall;
 
@@ -329,3 +325,8 @@ O projeto demonstra a integração entre análise de dados, desenvolvimento Pyth
 
 https://mercadosiderurgicobr.streamlit.app
 https://mercadosiderurgicobr.duckdns.org
+
+---
+<p align="center" style="font-family: 'Monotype Corsiva', cursive; font-size: 12pt;">
+  <em>"Da indústria à TI: conhecimento, gestão e segurança."</em>
+</p>
