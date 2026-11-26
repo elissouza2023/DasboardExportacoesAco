@@ -1,0 +1,54 @@
+
+name: Deploy OCI - Dashboard Siderurgico
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Implantar na VM OCI
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+
+    steps:
+      - name: Enviar notificacao autenticada para OCI
+        env:
+          DEPLOY_WEBHOOK_SECRET: ${{ secrets.DEPLOY_WEBHOOK_SECRET }}
+          WEBHOOK_URL: https://mercadosiderurgicobr.duckdns.org/deploy-hook
+          DELIVERY_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+
+        run: |
+          set -euo pipefail
+
+          PAYLOAD='{"repository":{"full_name":"elissouza2023/DasboardExportacoesAco"},"ref":"refs/heads/main","deleted":false}'
+
+          SIGNATURE=$(python3 -c '
+          import hashlib
+          import hmac
+          import os
+
+          secret = bytes.fromhex(os.environ["DEPLOY_WEBHOOK_SECRET"].strip())
+          body = b"{\"repository\":{\"full_name\":\"elissouza2023/DasboardExportacoesAco\"},\"ref\":\"refs/heads/main\",\"deleted\":false}"
+
+          print("sha256=" + hmac.new(secret, body, hashlib.sha256).hexdigest())
+          ')
+
+          echo "Enviando notificacao para OCI..."
+
+          curl --silent --show-error --fail-with-body \
+            --max-time 330 \
+            --request POST \
+            --header "Content-Type: application/json" \
+            --header "X-GitHub-Event: push" \
+            --header "X-GitHub-Delivery: ${DELIVERY_ID}" \
+            --header "X-Hub-Signature-256: ${SIGNATURE}" \
+            --data-binary "${PAYLOAD}" \
+            "${WEBHOOK_URL}"
+
+          echo
+          echo "Notificacao processada."
