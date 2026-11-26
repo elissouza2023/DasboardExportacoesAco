@@ -51,7 +51,7 @@ Os dados são originalmente em formato XLS e processados para CSV limpo e otimiz
 📁 data
 ├── 📁 raw # Planilhas originais baixadas
 │   └── Performance-Mensal_2025*.*.xls
-└── 📁 processed  
+└── 📁 processed  # Dados Limpos
 │    └── dados_siderurgia_limpos_2013_2025.csv
 │    └── dados_siderurgia_limpos_2025.csv
 📁 assets
@@ -64,7 +64,7 @@ Os dados são originalmente em formato XLS e processados para CSV limpo e otimiz
 ├── 📄 requirements.txt
 ├── 📄 README.md
 ├── 📄 .gitignore
-└── 📄 LICENSE
+
 ```
 ---
 
@@ -105,7 +105,7 @@ O projeto foi disponibilizado em duas plataformas de hospedagem em nuvem, demons
 
 A implantação utiliza camadas de proteção na infraestrutura de rede e no servidor Linux.
 
-- **1. Segurança de rede — OCI**
+**1. Segurança de rede — OCI**
 
   - VCN dedicada ao projeto.
 
@@ -119,7 +119,7 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
 
   - Portas HTTP (80) e HTTPS (443) liberadas para acesso público.
 
-- **2. Segurança no Ubuntu**
+**2. Segurança no Ubuntu**
 
   - Regras de firewall com iptables.
 
@@ -131,7 +131,7 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
 
   - Aplicação Streamlit executada em 127.0.0.1, acessível externamente somente por meio do Nginx.
 
-- **3. Comunicação criptografada**
+**3. Comunicação criptografada**
 
   - Certificado SSL/TLS emitido gratuitamente pela Let's Encrypt.
 
@@ -141,7 +141,7 @@ A implantação utiliza camadas de proteção na infraestrutura de rede e no ser
 
   - Renovação automática do certificado programada pelo Certbot.
 
-- **4. Gerenciamento da aplicação**
+**4. Gerenciamento da aplicação**
 
   - Serviço systemd para execução do Streamlit em segundo plano.
 
